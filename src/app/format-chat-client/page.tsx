@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: "Format Chat Client",
   description:
     "Buat pesan konfirmasi WhatsApp untuk sesi foto wisuda AuraLens secara otomatis dan rapi.",
+  robots: { index: false, follow: false },
 };
 
 export default function FormatChatClientPage() {

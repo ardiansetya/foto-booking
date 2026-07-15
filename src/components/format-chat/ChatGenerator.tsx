@@ -83,23 +83,65 @@ const FIELDS: {
   },
 ];
 
+const DAYS = [
+  "Minggu",
+  "Senin",
+  "Selasa",
+  "Rabu",
+  "Kamis",
+  "Jumat",
+  "Sabtu",
+];
+const MONTHS = [
+  "Januari",
+  "Februari",
+  "Maret",
+  "April",
+  "Mei",
+  "Juni",
+  "Juli",
+  "Agustus",
+  "September",
+  "Oktober",
+  "November",
+  "Desember",
+];
+
 function formatDate(iso: string): string {
   if (!iso) return "";
-  const [y, m, d] = iso.split("-");
-  return `${d}/${m}/${y}`;
+  const [y, m, d] = iso.split("-").map(Number);
+  const dt = new Date(y, m - 1, d);
+  return `${DAYS[dt.getDay()]}, ${d} ${MONTHS[m - 1]} ${y}`;
+}
+
+function formatTime(t: string): string {
+  return t.replace(":", ".");
 }
 
 function buildMessage(f: FormState): string {
-  return `Halo Kak ${f.clientName} 👋
+  return `Halo kak *${f.clientName}*,
 
-Konfirmasi sesi foto wisuda bersama AuraLens:
+Perkenalkan Saya *${f.photographer}*, fotografer dari Duasisi Graduation yang akan memotret wisuda kakak.
 
-Fotografer : ${f.photographer}
+Berikut konfirmasi jadwal foto wisuda kakak:
 Tanggal : ${formatDate(f.date)}
-Waktu : ${f.startTime} - ${f.endTime} WIB
-Lokasi : ${f.location}
+Waktu   : ${formatTime(f.startTime)} - ${formatTime(f.endTime)} WIB
+Lokasi  : ${f.location}
 
-Mohon hadir tepat waktu ya. Bila ada pertanyaan atau perubahan jadwal, silakan balas chat ini. Terima kasih! 🎓`;
+Sebelumnya, aku mau menanyakan beberapa hal agar pemotretan bisa berjalan lancar ya ka
+• Untuk lokasi ketemu, enaknya di sebelah mana ya Kak?
+• Lalu, total anggota yang akan difoto ada berapa orang?
+• Oh ya, Kak, Kakak ada gambaran foto seperti apa?
+Kalau boleh, bisa dikirimkan beberapa contoh foto yang sesuai dengan kampus sebagai referensi ya, Kak. Moodboard ini hanya sebagai gambaran dan hasilnya tidak akan sama persis dengan kondisi di lapangan nanti. Namun, jika belum ada, tidak apa-apa, nanti akan diarahkan oleh fotografer.
+
+NB :
+- Diharapkan datang tepat waktu agar sesi pemotretan berjalan lancar
+- Selalu perhatikan kerapian dan barang bawaannya
+- Untuk biaya perpanjangan waktu (Extend) bisa konfirmasi ke admin
+
+Terima kasih,
+*${f.photographer}*
+Fotografer Duasisi Graduation`;
 }
 
 export default function ChatGenerator() {
