@@ -42,14 +42,14 @@ const FIELDS: {
   {
     key: "photographer",
     label: "Nama Fotografer",
-    placeholder: "Imanuel",
+    placeholder: "Rendy",
     type: "text",
     icon: UserRound,
   },
   {
     key: "clientName",
     label: "Nama Client",
-    placeholder: "Angela",
+    placeholder: "Andi",
     type: "text",
     icon: User,
   },
