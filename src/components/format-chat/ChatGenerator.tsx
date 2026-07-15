@@ -239,7 +239,7 @@ export default function ChatGenerator() {
                     placeholder={field.placeholder}
                     onChange={(e) => update(field.key, e.target.value)}
                     aria-invalid={isMissing}
-                    className={`w-full rounded-lg border bg-zinc-50 dark:bg-zinc-950/50 pl-9 pr-3 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-600 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-emerald-500/60 focus-visible:border-emerald-500 ${
+                    className={`w-full rounded-lg border bg-zinc-50 dark:bg-zinc-950/50 pl-9 pr-3 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-600 outline-none transition-colors [color-scheme:light] dark:[color-scheme:dark] focus-visible:ring-2 focus-visible:ring-emerald-500/60 focus-visible:border-emerald-500 ${
                       isMissing
                         ? "border-red-400 dark:border-red-500/60"
                         : "border-zinc-200 dark:border-zinc-800"
