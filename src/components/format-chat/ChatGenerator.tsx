@@ -27,8 +27,8 @@ const EMPTY: FormState = {
   photographer: "",
   clientName: "",
   date: "",
-  startTime: "",
-  endTime: "",
+  startTime: "08:00",
+  endTime: "09:00",
   location: "",
 };
 
@@ -121,12 +121,12 @@ function formatTime(t: string): string {
 function buildMessage(f: FormState): string {
   return `Halo Kak *${f.clientName}* 👋
 
-  Perkenalkan, aku *${f.photographer}*, fotografer dari **AuraLens Graduation** yang nanti akan menemani sesi foto wisuda Kakak.
+  Perkenalkan, aku *${f.photographer}*, fotografer dari *AuraLens Graduation* yang nanti akan menemani sesi foto wisuda Kakak.
   
   Berikut detail jadwal pemotretan Kakak:
-  📅 **Tanggal:** ${formatDate(f.date)}
-  🕒 **Waktu:** ${formatTime(f.startTime)} - ${formatTime(f.endTime)} WIB
-  📍 **Lokasi:** ${f.location}
+  📅 *Tanggal:* ${formatDate(f.date)}
+  🕒 *Waktu:* ${formatTime(f.startTime)} - ${formatTime(f.endTime)} WIB
+  📍 *Lokasi:* ${f.location}
   
   Sebelum hari H, aku mau konfirmasi beberapa hal supaya sesi fotonya nanti lebih lancar ya, Kak.
   
@@ -136,7 +136,7 @@ function buildMessage(f: FormState): string {
   
   Kalau ada, boleh banget kirim beberapa referensi atau moodboard foto yang sesuai dengan area kampus ya, Kak. Referensi ini hanya sebagai acuan supaya aku bisa memahami konsep yang Kakak inginkan. Hasil akhirnya tentu akan disesuaikan dengan kondisi di lokasi nanti. Kalau belum ada juga tidak masalah kok, nanti akan aku bantu arahkan selama sesi pemotretan. 😊
   
-  **Catatan:**
+  *Catatan:*
   
   * Mohon datang sesuai jadwal agar waktu pemotretan bisa dimanfaatkan dengan maksimal.
   * Jangan lupa cek kembali kerapian penampilan serta barang bawaan sebelum berangkat.
