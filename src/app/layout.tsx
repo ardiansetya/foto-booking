@@ -60,7 +60,7 @@ export default function RootLayout({
       </head>
       <body className="bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-300 antialiased selection:bg-amber-400 selection:text-zinc-950 transition-colors duration-300">
         <Navbar />
-        <main className="min-h-[100dvh] pt-16 flex flex-col">
+        <main className="min-h-dvh pt-16 flex flex-col">
           <div className="flex-1">{children}</div>
         </main>
         <Footer />

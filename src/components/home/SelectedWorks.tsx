@@ -43,8 +43,7 @@ export default function SelectedWorks() {
             return (
               <ScrollReveal key={work.id} delay={index * 0.1}>
                 <div
-                  className={`group relative overflow-hidden bg-zinc-200 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 ${colSpan} ${height}`}
-                >
+                  className={`group relative overflow-hidden bg-zinc-200 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 ${colSpan} ${height}`}>
                   <ResponsiveImage
                     src={work.src}
                     alt={work.alt}
@@ -52,7 +51,7 @@ export default function SelectedWorks() {
                     className="transition-transform duration-500 group-hover:scale-105"
                   />
                   {/* Subtle hover overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-zinc-100/90 via-transparent to-transparent dark:from-zinc-950/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                  <div className="absolute inset-0 bg-linear-to-t from-zinc-100/90 via-transparent to-transparent dark:from-zinc-950/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
                     <p className="text-zinc-900 dark:text-zinc-100 text-sm font-medium">
                       {work.alt}
                     </p>

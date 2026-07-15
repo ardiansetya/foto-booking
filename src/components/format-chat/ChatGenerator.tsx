@@ -213,16 +213,17 @@ export default function ChatGenerator() {
           {FIELDS.map((field) => {
             const Icon = field.icon;
             const isMissing = submitted && form[field.key].trim() === "";
-            const full = field.key === "photographer" || field.key === "clientName" || field.key === "location";
+            const full =
+              field.key === "photographer" ||
+              field.key === "clientName" ||
+              field.key === "location";
             return (
               <div
                 key={field.key}
-                className={`flex flex-col gap-2 ${full ? "sm:col-span-2" : ""}`}
-              >
+                className={`flex flex-col gap-2 ${full ? "sm:col-span-2" : ""}`}>
                 <label
                   htmlFor={field.key}
-                  className="text-sm font-medium text-zinc-800 dark:text-zinc-200"
-                >
+                  className="text-sm font-medium text-zinc-800 dark:text-zinc-200">
                   {field.label}
                   <span className="text-emerald-500 dark:text-emerald-400">
                     {" "}
@@ -259,16 +260,14 @@ export default function ChatGenerator() {
           <button
             type="button"
             onClick={handleGenerate}
-            className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-amber-400 px-6 text-sm font-medium text-zinc-950 transition-colors hover:bg-amber-300 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-50 dark:focus-visible:ring-offset-zinc-950"
-          >
+            className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-amber-400 px-6 text-sm font-medium text-zinc-950 transition-colors hover:bg-amber-300 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-50 dark:focus-visible:ring-offset-zinc-950">
             <MessageCircle className="h-4 w-4" />
             Buat Template
           </button>
           <button
             type="button"
             onClick={handleReset}
-            className="inline-flex h-11 items-center justify-center gap-2 rounded-full border border-zinc-200 dark:border-zinc-800 px-6 text-sm font-medium text-zinc-700 dark:text-zinc-300 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400"
-          >
+            className="inline-flex h-11 items-center justify-center gap-2 rounded-full border border-zinc-200 dark:border-zinc-800 px-6 text-sm font-medium text-zinc-700 dark:text-zinc-300 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400">
             <RotateCcw className="h-4 w-4" />
             Reset
           </button>
@@ -285,7 +284,7 @@ export default function ChatGenerator() {
           {generated ? (
             <>
               <div className="rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-900/40 p-4">
-                <pre className="whitespace-pre-wrap break-words font-sans text-sm leading-relaxed text-zinc-800 dark:text-zinc-200">
+                <pre className="whitespace-pre-wrap wrap-break-word font-sans text-sm leading-relaxed text-zinc-800 dark:text-zinc-200">
                   {message}
                 </pre>
               </div>
@@ -295,16 +294,14 @@ export default function ChatGenerator() {
                   href={waHref}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-amber-400 px-6 text-sm font-medium text-zinc-950 transition-colors hover:bg-amber-300 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-50 dark:focus-visible:ring-offset-zinc-950"
-                >
+                  className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-amber-400 px-6 text-sm font-medium text-zinc-950 transition-colors hover:bg-amber-300 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-50 dark:focus-visible:ring-offset-zinc-950">
                   <MessageCircle className="h-4 w-4" />
                   Buka WhatsApp
                 </a>
                 <button
                   type="button"
                   onClick={handleCopy}
-                  className="inline-flex h-11 items-center justify-center gap-2 rounded-full border border-zinc-200 dark:border-zinc-800 px-6 text-sm font-medium text-zinc-700 dark:text-zinc-300 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400"
-                >
+                  className="inline-flex h-11 items-center justify-center gap-2 rounded-full border border-zinc-200 dark:border-zinc-800 px-6 text-sm font-medium text-zinc-700 dark:text-zinc-300 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400">
                   {copied ? (
                     <>
                       <Check className="h-4 w-4 text-emerald-500 dark:text-emerald-400" />
