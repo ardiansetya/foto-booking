@@ -121,31 +121,29 @@ function formatTime(t: string): string {
 function buildMessage(f: FormState): string {
   return `Halo Kak *${f.clientName}* 👋
 
-  Perkenalkan, aku *${f.photographer}*, fotografer dari *AuraLens Graduation* yang nanti akan menemani sesi foto wisuda Kakak.
+  Perkenalkan, aku *${f.photographer}*, fotografer dari **AuraLens Graduation** yang akan menemani sesi foto wisuda Kakak.
   
-  Berikut detail jadwal pemotretan Kakak:
-  📅 *Tanggal:* ${formatDate(f.date)}
-  🕒 *Waktu:* ${formatTime(f.startTime)} - ${formatTime(f.endTime)} WIB
-  📍 *Lokasi:* ${f.location}
+  Berikut jadwal pemotretannya:
+  📅 **Tanggal:** ${formatDate(f.date)}
+  🕒 **Waktu:** ${formatTime(f.startTime)} - ${formatTime(f.endTime)} WIB
+  📍 **Lokasi:** ${f.location}
   
-  Sebelum hari H, aku mau konfirmasi beberapa hal supaya sesi fotonya nanti lebih lancar ya, Kak.
+  Sebelum hari H, aku mau konfirmasi beberapa hal ya, Kak:
+  • Titik ketemunya enaknya di mana ya?
+  • Total yang ikut difoto ada berapa orang?
+  • Kalau ada referensi atau moodboard foto, boleh dikirim ya. Kalau belum ada juga tidak apa-apa, nanti akan aku bantu arahkan saat sesi.
   
-  • Kira-kira untuk titik ketemunya paling nyaman di sebelah mana ya, Kak?
-  • Total orang yang akan ikut difoto ada berapa ya?
-  • Kakak sudah punya konsep atau gambaran pose/foto yang diinginkan belum?
+  **Catatan:**
   
-  Kalau ada, boleh banget kirim beberapa referensi atau moodboard foto yang sesuai dengan area kampus ya, Kak. Referensi ini hanya sebagai acuan supaya aku bisa memahami konsep yang Kakak inginkan. Hasil akhirnya tentu akan disesuaikan dengan kondisi di lokasi nanti. Kalau belum ada juga tidak masalah kok, nanti akan aku bantu arahkan selama sesi pemotretan. 😊
-  
-  *Catatan:*
-  
-  * Mohon datang sesuai jadwal agar waktu pemotretan bisa dimanfaatkan dengan maksimal.
-  * Jangan lupa cek kembali kerapian penampilan serta barang bawaan sebelum berangkat.
-  * Kalau ingin menambah durasi pemotretan (extend), bisa langsung konfirmasi ke admin ya, Kak.
+  * Mohon datang tepat waktu.
+  * Pastikan penampilan dan barang bawaan sudah siap.
+  * Jika ingin extend waktu, bisa konfirmasi ke admin.
   
   Terima kasih, sampai ketemu di hari pemotretan! ✨
   
   *${f.photographer}*
-  Fotografer AuraLens Graduation`;
+  Fotografer AuraLens Graduation
+  `;
 }
 
 export default function ChatGenerator() {
