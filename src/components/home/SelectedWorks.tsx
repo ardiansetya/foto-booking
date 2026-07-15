@@ -13,9 +13,9 @@ export default function SelectedWorks() {
         <ScrollReveal>
           <div className="mb-16 flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
-              <span className="font-mono text-xs uppercase tracking-widest text-amber-500 dark:text-amber-400 block mb-3">
+              {/* <span className="font-mono text-xs uppercase tracking-widest text-amber-500 dark:text-amber-400 block mb-3">
                 Karya Terpilih
-              </span>
+              </span> */}
               <h2 className="text-3xl font-bold tracking-tighter text-zinc-900 dark:text-zinc-50 sm:text-4xl md:text-5xl leading-tight">
                 Galeri Wisuda Unggulan
               </h2>

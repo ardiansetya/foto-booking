@@ -56,6 +56,14 @@ export default function Footer() {
                     SOP
                   </Link>
                 </li>
+                <li>
+                  <Link
+                    href="/format-chat-client"
+                    className="hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors"
+                  >
+                    Format Chat
+                  </Link>
+                </li>
               </ul>
             </div>
             <div>

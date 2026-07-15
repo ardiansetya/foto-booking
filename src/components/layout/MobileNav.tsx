@@ -75,6 +75,13 @@ export default function MobileNav() {
               >
                 SOP
               </Link>
+              <Link
+                href="/format-chat-client"
+                onClick={() => setIsOpen(false)}
+                className="border-b border-zinc-200 dark:border-zinc-900 py-3 text-zinc-700 hover:text-emerald-500 dark:text-zinc-300 dark:hover:text-emerald-400 transition-colors"
+              >
+                Format Chat
+              </Link>
               <div className="mt-8 flex flex-col">
                 <WhatsAppButton className="w-full py-4 text-base" />
               </div>

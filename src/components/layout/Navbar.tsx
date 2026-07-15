@@ -57,6 +57,16 @@ export default function Navbar() {
             >
               SOP
             </Link>
+            <Link
+              href="/format-chat-client"
+              className={`text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 dark:focus-visible:ring-emerald-400 ${
+                isActive("/format-chat-client")
+                  ? "text-emerald-600 dark:text-emerald-400 font-semibold"
+                  : "text-zinc-600 hover:text-emerald-500 dark:text-zinc-300 dark:hover:text-emerald-400"
+              }`}
+            >
+              Format Chat
+            </Link>
             <WhatsAppButton className="py-2 text-sm">
               Hubungi Kami
             </WhatsAppButton>
