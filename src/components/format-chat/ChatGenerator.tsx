@@ -121,19 +121,19 @@ function formatTime(t: string): string {
 function buildMessage(f: FormState): string {
   return `Halo Kak *${f.clientName}* 👋
 
-  Perkenalkan, aku *${f.photographer}*, fotografer dari **AuraLens Graduation** yang akan menemani sesi foto wisuda Kakak.
+  Perkenalkan, aku *${f.photographer}*, fotografer dari *AuraLens Graduation* yang akan menemani sesi foto wisuda Kakak.
   
   Berikut jadwal pemotretannya:
-  📅 **Tanggal:** ${formatDate(f.date)}
-  🕒 **Waktu:** ${formatTime(f.startTime)} - ${formatTime(f.endTime)} WIB
-  📍 **Lokasi:** ${f.location}
+  📅 *Tanggal:* ${formatDate(f.date)}
+  🕒 *Waktu:* ${formatTime(f.startTime)} - ${formatTime(f.endTime)} WIB
+  📍 *Lokasi:* ${f.location}
   
   Sebelum hari H, aku mau konfirmasi beberapa hal ya, Kak:
   • Titik ketemunya enaknya di mana ya?
   • Total yang ikut difoto ada berapa orang?
   • Kalau ada referensi atau moodboard foto, boleh dikirim ya. Kalau belum ada juga tidak apa-apa, nanti akan aku bantu arahkan saat sesi.
   
-  **Catatan:**
+  *Catatan:*
   
   * Mohon datang tepat waktu.
   * Pastikan penampilan dan barang bawaan sudah siap.
