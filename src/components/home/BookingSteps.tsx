@@ -5,7 +5,7 @@ const STEPS = [
     number: "01",
     title: "Pilih Paket",
     description:
-      "Pilih paket foto wisuda yang paling sesuai dengan kebutuhan Anda.",
+      "Pilih paket foto yang paling sesuai dengan kebutuhan Anda.",
   },
   {
     number: "02",
@@ -15,21 +15,21 @@ const STEPS = [
   },
   {
     number: "03",
-    title: "Konfirmasi",
+    title: "Bayar DP",
     description:
-      "Lakukan pembayaran DP 50% untuk mengamankan slot tanggal wisuda Anda.",
+      "DP Rp 150.000 (paket Luxury Rp 250.000) untuk mengamankan slot jadwal Anda. Pelunasan H-1 sebelum jam 21.00.",
   },
   {
     number: "04",
     title: "Sesi Foto",
     description:
-      "Proses pengambilan foto wisuda sesuai jadwal dan lokasi yang disepakati.",
+      "Proses pengambilan foto sesuai jam booking dan lokasi yang disepakati. Bebas pilih spot foto.",
   },
   {
     number: "05",
     title: "Terima Foto",
     description:
-      "Foto hasil retouching dikirim lewat Google Drive dalam 7-14 hari kerja.",
+      "File foto diproses maksimal H+1 jam 12.00. Link foto dikirim oleh admin via Google Drive.",
   },
 ];
 
