@@ -14,7 +14,7 @@ export default function FinalCTA() {
               Mulai Sekarang
             </span>
             <h2 className="text-3xl font-bold tracking-tighter text-zinc-900 dark:text-zinc-50 sm:text-4xl md:text-5xl leading-tight mb-6">
-              Sudah Siap Mengabadikan Momen Kelulusan Anda?
+              Yuk Booking Sekarang Juga, dan Dapatkan Hasil Foto Terbaik!
             </h2>
             <p className="text-zinc-650 dark:text-zinc-400 text-sm md:text-base leading-relaxed max-w-[50ch] mx-auto">
               Isi detail rencana pemotretan Anda di bawah, lalu kirim langsung

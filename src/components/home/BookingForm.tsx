@@ -98,7 +98,7 @@ function formatDate(iso: string): string {
 }
 
 function buildMessage(f: BookingState): string {
-  return `Halo Admin Omegraduation 👋
+  return `Halo Admin Omegraduation!
 
 Aku mau booking sesi foto nih, berikut datanya:
 
@@ -109,7 +109,7 @@ Jam : ${f.time.replace(":", ".")} WIB
 Lokasi : ${f.location}
 Instagram : ${f.instagram}
 
-Boleh dibantu cek ketersediaan jadwalnya, Kak? Terima kasih 🙏`;
+Boleh dibantu cek ketersediaan jadwalnya, Kak? Terima kasih!`;
 }
 
 export default function BookingForm() {
