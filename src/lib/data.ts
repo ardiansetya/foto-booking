@@ -279,7 +279,7 @@ export const FAQS: FAQ[] = [
     id: "faq-1",
     question: "Kapan saya harus melakukan booking?",
     answer:
-      "Kami menyarankan Anda melakukan booking minimal 2-4 minggu sebelum tanggal wisuda untuk mengamankan slot waktu.",
+      "Kami menyarankan Anda melakukan booking minimal 2-4 minggu sebelum tanggal pemotretan untuk mengamankan slot waktu.",
   },
   {
     id: "faq-2",
@@ -289,14 +289,32 @@ export const FAQS: FAQ[] = [
   },
   {
     id: "faq-3",
-    question: "Berapa lama proses pengiriman file foto?",
+    question: "Bagaimana sistem pembayarannya?",
     answer:
-      "Semua file foto diproses maksimal H+1 jam 12.00 dan link foto akan dikirim oleh admin.",
+      "DP Rp 150.000 untuk paket selain Luxury dan Grub, DP Rp 250.000 untuk paket Luxury. Pelunasan dilakukan H-1 sebelum jam 21.00. Pembayaran hangus apabila ada pembatalan atau reschedule dari client.",
   },
   {
     id: "faq-4",
-    question: "Bagaimana sistem pembayarannya?",
+    question: "Kapan file foto saya dikirim?",
     answer:
-      "DP Rp 150.000 untuk paket selain Luxury dan Grub, DP Rp 250.000 untuk paket Luxury. Pelunasan dilakukan H-1 sebelum jam 21.00.",
+      "Semua file foto diproses maksimal H+1 jam 12.00 dan link foto akan dikirim oleh admin. Paket Silver, Luxury 2, dan Luxury 3 mendapat sameday edit 15 file (maksimal dikirim jam 23.50). Semua soft file edit disimpan di Google Drive selama 1 bulan (Luxury 2 dan Luxury 3 selama 2 bulan).",
+  },
+  {
+    id: "faq-5",
+    question: "Bagaimana jika durasi sesi foto kurang?",
+    answer:
+      "Bisa extra time 30 menit Rp 175.000 (paket Grub Rp 250.000) apabila fotografer tidak ada jadwal di jam berikutnya. Durasi dihitung sesuai jam booking, termasuk saat pindah lokasi.",
+  },
+  {
+    id: "faq-6",
+    question: "Bolehkah menambah jumlah wisudawan dalam satu sesi?",
+    answer:
+      "Boleh. Tambahan wisudawan dikenakan biaya Rp 100.000 per orang. Konfirmasikan jumlah peserta ke admin saat booking.",
+  },
+  {
+    id: "faq-7",
+    question: "Apakah bisa foto sesi malam?",
+    answer:
+      "Bisa. Silakan konfirmasi jadwal sesi malam ke admin saat booking. Anda juga boleh menginfokan kebaya atau outfit ke admin agar bisa diarahkan sesuai tone foto kami.",
   },
 ];

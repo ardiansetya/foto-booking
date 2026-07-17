@@ -26,7 +26,7 @@ export default function Hero() {
         <div className="max-w-2xl">
           {/* Eyebrow */}
           <span className="mb-4 inline-block font-mono text-xs uppercase tracking-widest text-amber-500 dark:text-amber-400">
-            Fotografi Wisuda Premium
+            Fotografi Wisuda &amp; Wedding Premium
           </span>
 
           {/* Headline */}
@@ -38,8 +38,8 @@ export default function Hero() {
 
           {/* Subtext */}
           <p className="mb-8 text-base md:text-lg text-zinc-700 dark:text-zinc-300 max-w-[45ch] leading-relaxed">
-            Abadikan pencapaian kelulusan Anda dalam potret wisuda terbaik yang
-            elegan dan abadi.
+            Abadikan momen wisuda dan hari pernikahan Anda dalam potret terbaik
+            yang elegan dan abadi.
           </p>
 
           {/* CTA */}

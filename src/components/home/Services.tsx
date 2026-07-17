@@ -1,4 +1,4 @@
-import { Camera, Heart, School, Users } from "lucide-react";
+import { Camera, Gem, Heart, School, Users } from "lucide-react";
 import ScrollReveal from "../shared/ScrollReveal";
 
 const SERVICES_LIST = [
@@ -26,6 +26,12 @@ const SERVICES_LIST = [
     description:
       "Sesi formal dan emosional wisuda bersama orang tua dan keluarga terdekat.",
   },
+  {
+    icon: Gem,
+    title: "Dokumentasi Wedding",
+    description:
+      "Abadikan hari pernikahan Anda dengan dokumentasi sinematik dari akad hingga resepsi.",
+  },
 ];
 
 export default function Services() {
@@ -43,8 +49,8 @@ export default function Services() {
                 Apa Yang Kami Tawarkan
               </h2>
               <p className="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed max-w-[35ch]">
-                Kami menyediakan berbagai konsep pemotretan wisuda yang
-                disesuaikan dengan keinginan Anda.
+                Kami menyediakan berbagai konsep pemotretan wisuda dan wedding
+                yang disesuaikan dengan keinginan Anda.
               </p>
             </ScrollReveal>
           </div>

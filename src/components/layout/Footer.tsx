@@ -16,7 +16,7 @@ export default function Footer() {
               Omegraduation
             </Link>
             <p className="max-w-[45ch] text-sm leading-relaxed text-zinc-650 dark:text-zinc-400">
-              Jasa fotografi wisuda profesional. Abadikan momen kelulusan
+              Jasa fotografi wisuda dan wedding profesional. Abadikan momen
               berharga Anda dengan kualitas visual premium dan sinematik.
             </p>
           </div>

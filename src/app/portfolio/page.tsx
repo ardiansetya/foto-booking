@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import GalleryGrid from "@/components/portfolio/GalleryGrid";
 
 export const metadata: Metadata = {
-  title: "Portfolio Foto Wisuda",
+  title: "Portfolio Foto Wisuda & Wedding",
   description:
     "Galeri hasil foto wisuda dan wedding profesional: personal, couple, group, family. Lihat kualitas sinematik jepretan fotografer kami.",
   alternates: { canonical: "/portfolio" },
@@ -18,11 +18,11 @@ export default function PortfolioPage() {
             Koleksi Foto
           </span>
           <h1 className="text-4xl font-bold tracking-tighter text-zinc-900 dark:text-zinc-50 sm:text-5xl md:text-6xl mb-4 leading-tight">
-            Portfolio Kelulusan
+            Portfolio Kami
           </h1>
           <p className="text-zinc-655 dark:text-zinc-400 text-sm leading-relaxed">
-            Galeri dokumentasi wisuda dari berbagai universitas terbaik.
-            Dikurasi khusus untuk inspirasi gaya dan pose wisuda Anda.
+            Galeri dokumentasi wisuda dan wedding pilihan. Dikurasi khusus
+            untuk inspirasi gaya dan pose pemotretan Anda.
           </p>
         </div>
 

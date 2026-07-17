@@ -12,7 +12,7 @@ export default function Testimonials() {
               Testimoni Klien
             </span>
             <h2 className="text-3xl font-bold tracking-tighter text-zinc-900 dark:text-zinc-50 sm:text-4xl md:text-5xl leading-tight">
-              Apa Kata Wisudawan
+              Apa Kata Klien Kami
             </h2>
           </div>
         </ScrollReveal>

@@ -10,10 +10,10 @@ export default function BrandStatement() {
               Visi Kami
             </span>
             <p className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight leading-normal text-zinc-800 dark:text-zinc-100">
-              Kami percaya kelulusan wisuda adalah salah satu pencapaian
-              terbesar dalam hidup Anda. Komitmen kami adalah menangkap setiap
-              kebanggaan, senyuman, dan rasa haru dalam tangkapan lensa
-              berkualitas premium.
+              Kami percaya wisuda dan pernikahan adalah momen terbesar dalam
+              hidup Anda. Komitmen kami adalah menangkap setiap kebanggaan,
+              senyuman, dan rasa haru dalam tangkapan lensa berkualitas
+              premium.
             </p>
           </div>
         </ScrollReveal>

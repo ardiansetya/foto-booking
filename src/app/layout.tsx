@@ -19,7 +19,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE_NAME} | Jasa Foto Wisuda Profesional`,
+    default: `${SITE_NAME} | Jasa Foto Wisuda & Wedding Profesional`,
     template: `%s | ${SITE_NAME}`,
   },
   description:
@@ -28,9 +28,12 @@ export const metadata: Metadata = {
     "jasa foto wisuda",
     "fotografer wisuda",
     "jasa foto wedding",
+    "fotografer wedding",
     "paket foto wisuda",
+    "dokumentasi pernikahan",
     "foto graduation",
     "foto wisuda solo semarang jogja",
+    "foto wedding solo semarang jogja",
   ],
   alternates: {
     canonical: "/",
@@ -46,9 +49,9 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: `${SITE_NAME} | Jasa Foto Wisuda Profesional`,
+    title: `${SITE_NAME} | Jasa Foto Wisuda & Wedding Profesional`,
     description:
-      "Abadikan momen wisuda berharga Anda dengan kualitas sinematik premium. Booking mudah via WhatsApp.",
+      "Abadikan momen wisuda dan pernikahan Anda dengan kualitas sinematik premium. Booking mudah via WhatsApp.",
     url: SITE_URL,
     siteName: SITE_NAME,
     type: "website",
@@ -56,9 +59,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: `${SITE_NAME} | Jasa Foto Wisuda Profesional`,
+    title: `${SITE_NAME} | Jasa Foto Wisuda & Wedding Profesional`,
     description:
-      "Abadikan momen wisuda berharga Anda dengan kualitas sinematik premium.",
+      "Abadikan momen wisuda dan pernikahan Anda dengan kualitas sinematik premium.",
   },
 };
 
@@ -67,7 +70,7 @@ const jsonLd = {
   "@type": "ProfessionalService",
   name: SITE_NAME,
   description:
-    "Jasa fotografi wisuda profesional dengan kualitas sinematik untuk mahasiswa tingkat akhir.",
+    "Jasa fotografi wisuda dan wedding profesional dengan kualitas sinematik. Melayani area Solo, Semarang, Jogja, Salatiga, dan Kudus.",
   url: SITE_URL,
   email: SOCIAL_LINKS.email,
   areaServed: ["Solo", "Semarang", "Jogja", "Salatiga", "Kudus"],
