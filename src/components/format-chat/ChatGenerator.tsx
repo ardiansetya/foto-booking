@@ -1,5 +1,6 @@
 "use client";
 
+import { WHATSAPP_BASE_URL } from "@/lib/constants";
 import {
   Calendar,
   Check,
@@ -12,7 +13,6 @@ import {
   UserRound,
 } from "lucide-react";
 import { useMemo, useState } from "react";
-import { WHATSAPP_BASE_URL } from "@/lib/constants";
 
 interface FormState {
   photographer: string;
@@ -83,15 +83,7 @@ const FIELDS: {
   },
 ];
 
-const DAYS = [
-  "Minggu",
-  "Senin",
-  "Selasa",
-  "Rabu",
-  "Kamis",
-  "Jumat",
-  "Sabtu",
-];
+const DAYS = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
 const MONTHS = [
   "Januari",
   "Februari",
@@ -119,30 +111,21 @@ function formatTime(t: string): string {
 }
 
 function buildMessage(f: FormState): string {
-  return `Halo Kak *${f.clientName}* 👋
+  return `Halo Kak ${f.clientName} 👋
 
-  Perkenalkan, aku *${f.photographer}*, fotografer dari *AuraLens Graduation* yang akan menemani sesi foto wisuda Kakak.
+  Perkenalkan, saya ${f.photographer} dari AuraLens Graduation. Mau konfirmasi jadwal foto Kakak ya.
   
-  Berikut jadwal pemotretannya:
-  📅 *Tanggal:* ${formatDate(f.date)}
-  🕒 *Waktu:* ${formatTime(f.startTime)} - ${formatTime(f.endTime)} WIB
-  📍 *Lokasi:* ${f.location}
+  Lokasi: ${f.location}
+  Tanggal: ${formatDate(f.date)}
+  Jam: ${formatTime(f.startTime)} - ${formatTime(f.endTime)} WIB
   
-  Sebelum hari H, aku mau konfirmasi beberapa hal ya, Kak:
-  • Titik ketemunya enaknya di mana ya?
-  • Total yang ikut difoto ada berapa orang?
-  • Kalau ada referensi atau moodboard foto, boleh dikirim ya. Kalau belum ada juga tidak apa-apa, nanti akan aku bantu arahkan saat sesi.
+  Untuk meeting point atau spot pertama maunya di sebelah mana ya, Kak?
   
-  *Catatan:*
+  Boleh info warna kebaya atau outfit yang akan dipakai supaya tidak bertabrakan dengan tone pemotretan ya, Kak. Kalau ada moodboard atau referensi foto, boleh sekalian dikirim juga.
   
-  * Mohon datang tepat waktu.
-  * Pastikan penampilan dan barang bawaan sudah siap.
-  * Jika ingin extend waktu, bisa konfirmasi ke admin.
+  Untuk jam pemotretannya mohon mengikuti jadwal yang sudah dikirim oleh admin ya, Kak.
   
-  Terima kasih, sampai ketemu di hari pemotretan! ✨
-  
-  *${f.photographer}*
-  Fotografer AuraLens Graduation
+  Terima kasih 🙏🏻
   `;
 }
 
