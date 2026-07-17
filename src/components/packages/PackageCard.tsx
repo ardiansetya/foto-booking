@@ -7,7 +7,7 @@ interface PackageCardProps {
 }
 
 export default function PackageCard({ pkg }: PackageCardProps) {
-  const message = `Halo kak, aku tertarik sama paket ${pkg.name} nih. Boleh tanya-tanya dulu ga ya? 😊`;
+  const message = `Halo kak, aku tertarik sama paket ${pkg.name} nih. Boleh tanya-tanya dulu ga ya?`;
   const waHref = `${WHATSAPP_BASE_URL}/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
 
   return (
