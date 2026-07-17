@@ -23,14 +23,14 @@ export const metadata: Metadata = {
     template: `%s | ${SITE_NAME}`,
   },
   description:
-    "Jasa foto wisuda profesional dengan kualitas sinematik. Paket personal, couple, group mulai Rp 350.000. Booking mudah via WhatsApp, hasil edit 7-14 hari.",
+    "Jasa foto wisuda dan wedding profesional dengan kualitas sinematik. Area Solo, Semarang, Jogja, Salatiga, Kudus. Booking mudah via WhatsApp.",
   keywords: [
     "jasa foto wisuda",
     "fotografer wisuda",
-    "foto wisuda murah",
+    "jasa foto wedding",
     "paket foto wisuda",
     "foto graduation",
-    "jasa fotografi wisuda profesional",
+    "foto wisuda solo semarang jogja",
   ],
   alternates: {
     canonical: "/",
@@ -70,34 +70,18 @@ const jsonLd = {
     "Jasa fotografi wisuda profesional dengan kualitas sinematik untuk mahasiswa tingkat akhir.",
   url: SITE_URL,
   email: SOCIAL_LINKS.email,
-  priceRange: "Rp350.000 - Rp1.200.000",
-  areaServed: "Indonesia",
+  areaServed: ["Solo", "Semarang", "Jogja", "Salatiga", "Kudus"],
   sameAs: [SOCIAL_LINKS.instagram, SOCIAL_LINKS.tiktok],
   makesOffer: [
-    {
-      "@type": "Offer",
-      name: "Wisuda Personal",
-      price: "350000",
-      priceCurrency: "IDR",
-    },
-    {
-      "@type": "Offer",
-      name: "Wisuda Couple",
-      price: "500000",
-      priceCurrency: "IDR",
-    },
-    {
-      "@type": "Offer",
-      name: "Wisuda Best Friend",
-      price: "750000",
-      priceCurrency: "IDR",
-    },
-    {
-      "@type": "Offer",
-      name: "Wisuda Group",
-      price: "1200000",
-      priceCurrency: "IDR",
-    },
+    { "@type": "Offer", name: "Omegraduation Bronze" },
+    { "@type": "Offer", name: "Omegraduation Silver" },
+    { "@type": "Offer", name: "Omegraduation Couple" },
+    { "@type": "Offer", name: "Omegraduation Luxury 1" },
+    { "@type": "Offer", name: "Omegraduation Luxury 2" },
+    { "@type": "Offer", name: "Omegraduation Luxury 3" },
+    { "@type": "Offer", name: "Omegraduation Grub 1" },
+    { "@type": "Offer", name: "Omegraduation Grub 2" },
+    { "@type": "Offer", name: "Omegraduation Grub 3" },
   ],
 };
 

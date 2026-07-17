@@ -9,7 +9,7 @@ const CATEGORIES = [
   { id: "all", label: "Semua" },
   { id: "personal", label: "Personal" },
   { id: "couple", label: "Couple" },
-  { id: "bestfriend", label: "Best Friend" },
+  { id: "wedding", label: "Wedding" },
   { id: "group", label: "Group" },
   { id: "family", label: "Family" },
 ] as const;

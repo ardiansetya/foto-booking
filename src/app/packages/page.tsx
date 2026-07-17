@@ -2,12 +2,12 @@ import type { Metadata } from "next";
 import BookingSteps from "@/components/home/BookingSteps";
 import PackageCard from "@/components/packages/PackageCard";
 import ScrollReveal from "@/components/shared/ScrollReveal";
-import { FAQS, PACKAGES } from "@/lib/data";
+import { FAQS, PACKAGES, PACKAGES_NOTE } from "@/lib/data";
 
 export const metadata: Metadata = {
-  title: "Paket & Harga Foto Wisuda",
+  title: "Paket Foto Wisuda",
   description:
-    "Harga paket foto wisuda mulai Rp 350.000: personal, couple, best friend, group. Termasuk foto edit resolusi tinggi dan semua raw file.",
+    "Pilihan paket foto wisuda: Bronze, Silver, Couple, Luxury, dan Grub. Include transport area Solo, Semarang, Jogja, Salatiga, Kudus.",
   alternates: { canonical: "/packages" },
 };
 
@@ -47,14 +47,19 @@ export default function PackagesPage() {
           </p>
         </div>
 
-        {/* Packages List */}
-        <div className="flex flex-col gap-6 mb-24">
+        {/* Packages Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {PACKAGES.map((pkg, index) => (
             <ScrollReveal key={pkg.id} delay={index * 0.05}>
               <PackageCard pkg={pkg} />
             </ScrollReveal>
           ))}
         </div>
+
+        {/* Add-on Note */}
+        <p className="text-center text-sm text-zinc-600 dark:text-zinc-400 mb-24">
+          {PACKAGES_NOTE}
+        </p>
 
         {/* SOP Booking Process Section (Reused Component) */}
         <div className="border-t border-zinc-200 dark:border-zinc-900">

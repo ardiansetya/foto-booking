@@ -4,7 +4,7 @@ export interface PortfolioImage {
   alt: string;
   width: number;
   height: number;
-  category: "personal" | "couple" | "bestfriend" | "group" | "family";
+  category: "personal" | "couple" | "wedding" | "group" | "family";
   featured?: boolean;
 }
 
@@ -16,7 +16,6 @@ export interface Package {
   people: string;
   duration: string;
   photos: string;
-  price: number;
   includes: string[];
 }
 
