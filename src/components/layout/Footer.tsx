@@ -13,10 +13,7 @@ export default function Footer() {
             <Link
               href="/"
               className="text-lg font-bold tracking-widest text-zinc-900 dark:text-zinc-50 focus-visible:outline-none">
-              AURA
-              <span className="text-emerald-500 dark:text-emerald-400">
-                LENS
-              </span>
+              Omegraduation
             </Link>
             <p className="max-w-[45ch] text-sm leading-relaxed text-zinc-650 dark:text-zinc-400">
               Jasa fotografi wisuda profesional. Abadikan momen kelulusan

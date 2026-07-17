@@ -5,7 +5,8 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "SOP Pemesanan & Pemotretan",
   description:
-    "Standard Operating Procedure (SOP) untuk sesi pemotretan, pasca pemotretan, dan pelunasan di Omegraduation.",
+    "Prosedur booking foto wisuda: aturan sesi pemotretan, pengiriman file, proses edit, dan pembayaran. Baca sebelum booking.",
+  alternates: { canonical: "/sop" },
 };
 
 const SOP_SECTIONS = [

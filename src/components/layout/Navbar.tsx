@@ -17,10 +17,8 @@ export default function Navbar() {
         {/* Logo */}
         <Link
           href="/"
-          className="text-lg font-bold tracking-widest text-zinc-900 dark:text-zinc-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 dark:focus-visible:ring-emerald-400"
-        >
-          AURA
-          <span className="text-emerald-500 dark:text-emerald-400">LENS</span>
+          className="text-lg font-bold tracking-widest text-zinc-900 dark:text-zinc-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 dark:focus-visible:ring-emerald-400">
+          Omegraduation
         </Link>
 
         {/* Right Section */}
@@ -33,8 +31,7 @@ export default function Navbar() {
                 isActive("/portfolio")
                   ? "text-emerald-600 dark:text-emerald-400 font-semibold"
                   : "text-zinc-600 hover:text-emerald-500 dark:text-zinc-300 dark:hover:text-emerald-400"
-              }`}
-            >
+              }`}>
               Portfolio
             </Link>
             <Link
@@ -43,8 +40,7 @@ export default function Navbar() {
                 isActive("/packages")
                   ? "text-emerald-600 dark:text-emerald-400 font-semibold"
                   : "text-zinc-600 hover:text-emerald-500 dark:text-zinc-300 dark:hover:text-emerald-400"
-              }`}
-            >
+              }`}>
               Paket
             </Link>
             <Link
@@ -53,8 +49,7 @@ export default function Navbar() {
                 isActive("/sop")
                   ? "text-emerald-600 dark:text-emerald-400 font-semibold"
                   : "text-zinc-600 hover:text-emerald-500 dark:text-zinc-300 dark:hover:text-emerald-400"
-              }`}
-            >
+              }`}>
               SOP
             </Link>
             <WhatsAppButton className="py-2 text-sm">

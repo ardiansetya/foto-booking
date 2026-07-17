@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import GalleryGrid from "@/components/portfolio/GalleryGrid";
 
 export const metadata: Metadata = {
-  title: "Portfolio Wisuda",
+  title: "Portfolio Foto Wisuda",
   description:
-    "Lihat hasil jepretan wisuda premium kami dalam berbagai kategori pemotretan.",
+    "Galeri hasil foto wisuda profesional: personal, couple, best friend, dan group. Lihat kualitas sinematik jepretan fotografer kami.",
+  alternates: { canonical: "/portfolio" },
 };
 
 export default function PortfolioPage() {

@@ -5,14 +5,33 @@ import ScrollReveal from "@/components/shared/ScrollReveal";
 import { FAQS, PACKAGES } from "@/lib/data";
 
 export const metadata: Metadata = {
-  title: "Paket & Harga",
+  title: "Paket & Harga Foto Wisuda",
   description:
-    "Daftar paket harga fotografi wisuda premium. Pilih layanan terbaik untuk Anda.",
+    "Harga paket foto wisuda mulai Rp 350.000: personal, couple, best friend, group. Termasuk foto edit resolusi tinggi dan semua raw file.",
+  alternates: { canonical: "/packages" },
+};
+
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: FAQS.map((faq) => ({
+    "@type": "Question",
+    name: faq.question,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: faq.answer,
+    },
+  })),
 };
 
 export default function PackagesPage() {
   return (
     <div className="bg-zinc-50 dark:bg-zinc-950 min-h-screen py-16 md:py-24 transition-colors duration-300">
+      <script
+        type="application/ld+json"
+        // biome-ignore lint/security/noDangerouslySetInnerHtml: static JSON-LD structured data for SEO
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
       <div className="mx-auto max-w-7xl px-4 md:px-8">
         {/* Page Header */}
         <div className="text-center max-w-2xl mx-auto mb-16">
