@@ -59,9 +59,8 @@ export default function PackageCard({ pkg }: PackageCardProps) {
           </span>
         </div>
         <WhatsAppButton
-          message={`Halo AuraLens, saya ingin memesan paket "${pkg.name}".`}
-          className="py-3 px-6 text-xs w-full lg:w-auto"
-        >
+          message={`Halo Omegraduation, saya ingin memesan paket "${pkg.name}".`}
+          className="py-3 px-6 text-xs w-full lg:w-auto">
           Pilih Paket
         </WhatsAppButton>
       </div>

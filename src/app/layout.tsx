@@ -1,8 +1,8 @@
-import type { Metadata } from "next";
-import { Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import Footer from "@/components/layout/Footer";
 import Navbar from "@/components/layout/Navbar";
 import FloatingWhatsApp from "@/components/shared/FloatingWhatsApp";
+import type { Metadata } from "next";
+import { Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -17,13 +17,13 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "AuraLens | Jasa Fotografi Wisuda Profesional",
-    template: "%s | AuraLens",
+    default: "Omegraduation | Jasa Fotografi Wisuda Profesional",
+    template: "%s | Omegraduation",
   },
   description:
     "Showcase portfolio dan booking layanan fotografi wisuda berkualitas tinggi untuk mahasiswa tingkat akhir.",
   openGraph: {
-    title: "AuraLens | Jasa Fotografi Wisuda Profesional",
+    title: "Omegraduation | Jasa Fotografi Wisuda Profesional",
     description:
       "Abadikan momen wisuda berharga Anda dengan kualitas sinematik premium.",
     type: "website",
@@ -40,8 +40,7 @@ export default function RootLayout({
     <html
       lang="id"
       className={`${plusJakartaSans.variable} ${geistMono.variable}`}
-      suppressHydrationWarning
-    >
+      suppressHydrationWarning>
       <head>
         <script
           // biome-ignore lint/security/noDangerouslySetInnerHtml: static inline script for theme initialization

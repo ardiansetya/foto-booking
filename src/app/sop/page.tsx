@@ -1,11 +1,11 @@
+import ScrollReveal from "@/components/shared/ScrollReveal";
 import { Camera, CheckCircle, CreditCard } from "lucide-react";
 import type { Metadata } from "next";
-import ScrollReveal from "@/components/shared/ScrollReveal";
 
 export const metadata: Metadata = {
   title: "SOP Pemesanan & Pemotretan",
   description:
-    "Standard Operating Procedure (SOP) untuk sesi pemotretan, pasca pemotretan, dan pelunasan di AuraLens.",
+    "Standard Operating Procedure (SOP) untuk sesi pemotretan, pasca pemotretan, dan pelunasan di Omegraduation.",
 };
 
 const SOP_SECTIONS = [
@@ -13,9 +13,9 @@ const SOP_SECTIONS = [
     icon: Camera,
     title: "Sesi Pemotretan",
     items: [
-      "Datang tepat waktu, toleransi keterlambatan 10 - 15 menit. Jika terjadi keterlambatan dari fotografer, hubungi admin AuraLens.",
+      "Datang tepat waktu, toleransi keterlambatan 10 - 15 menit. Jika terjadi keterlambatan dari fotografer, hubungi admin Omegraduation.",
       "Boleh melihat hasil preview foto yang diambil oleh fotografer di lokasi.",
-      "Kirimkan moodboard ke admin AuraLens atau tim fotografer jika Anda memilikinya.",
+      "Kirimkan moodboard ke admin Omegraduation atau tim fotografer jika Anda memilikinya.",
       "Ikuti arahan dari fotografer agar hasil foto Anda lebih maksimal.",
       "Jika ada permintaan khusus (request), silakan langsung sampaikan kepada fotografer.",
     ],

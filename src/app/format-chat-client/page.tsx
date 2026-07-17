@@ -1,10 +1,10 @@
-import type { Metadata } from "next";
 import ChatGenerator from "@/components/format-chat/ChatGenerator";
+import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Format Chat Client",
   description:
-    "Buat pesan konfirmasi WhatsApp untuk sesi foto wisuda AuraLens secara otomatis dan rapi.",
+    "Buat pesan konfirmasi WhatsApp untuk sesi foto wisuda Omegraduation secara otomatis dan rapi.",
   robots: { index: false, follow: false },
 };
 
@@ -21,8 +21,8 @@ export default function FormatChatClientPage() {
             Format Chat Client
           </h1>
           <p className="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed">
-            Isi detail sesi foto wisuda, lalu buat pesan konfirmasi WhatsApp yang
-            rapi dan siap dikirim ke client dalam sekali klik.
+            Isi detail sesi foto wisuda, lalu buat pesan konfirmasi WhatsApp
+            yang rapi dan siap dikirim ke client dalam sekali klik.
           </p>
         </div>
 

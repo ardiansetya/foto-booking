@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { SOCIAL_LINKS } from "@/lib/constants";
+import Link from "next/link";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -12,8 +12,7 @@ export default function Footer() {
           <div className="flex flex-col gap-4">
             <Link
               href="/"
-              className="text-lg font-bold tracking-widest text-zinc-900 dark:text-zinc-50 focus-visible:outline-none"
-            >
+              className="text-lg font-bold tracking-widest text-zinc-900 dark:text-zinc-50 focus-visible:outline-none">
               AURA
               <span className="text-emerald-500 dark:text-emerald-400">
                 LENS
@@ -35,24 +34,21 @@ export default function Footer() {
                 <li>
                   <Link
                     href="/portfolio"
-                    className="hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors"
-                  >
+                    className="hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors">
                     Portfolio
                   </Link>
                 </li>
                 <li>
                   <Link
                     href="/packages"
-                    className="hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors"
-                  >
+                    className="hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors">
                     Packages
                   </Link>
                 </li>
                 <li>
                   <Link
                     href="/sop"
-                    className="hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors"
-                  >
+                    className="hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors">
                     SOP
                   </Link>
                 </li>
@@ -68,8 +64,7 @@ export default function Footer() {
                     href={SOCIAL_LINKS.instagram}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="hover:text-amber-500 dark:hover:text-amber-400 transition-colors"
-                  >
+                    className="hover:text-amber-500 dark:hover:text-amber-400 transition-colors">
                     Instagram
                   </a>
                 </li>
@@ -78,16 +73,14 @@ export default function Footer() {
                     href={SOCIAL_LINKS.tiktok}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="hover:text-amber-500 dark:hover:text-amber-400 transition-colors"
-                  >
+                    className="hover:text-amber-500 dark:hover:text-amber-400 transition-colors">
                     TikTok
                   </a>
                 </li>
                 <li className="break-all">
                   <a
                     href={`mailto:${SOCIAL_LINKS.email}`}
-                    className="hover:text-amber-500 dark:hover:text-amber-400 transition-colors"
-                  >
+                    className="hover:text-amber-500 dark:hover:text-amber-400 transition-colors">
                     {SOCIAL_LINKS.email}
                   </a>
                 </li>
@@ -98,7 +91,7 @@ export default function Footer() {
 
         {/* Copyright */}
         <div className="border-t border-zinc-200 dark:border-zinc-900 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs">
-          <p>&copy; {currentYear} AuraLens. Hak Cipta Dilindungi.</p>
+          <p>&copy; {currentYear} Omegraduation. Hak Cipta Dilindungi.</p>
           <p className="text-zinc-400 dark:text-zinc-600">
             Terdesain khusus untuk wisudawan Indonesia.
           </p>
