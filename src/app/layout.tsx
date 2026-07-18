@@ -1,6 +1,7 @@
 import Footer from "@/components/layout/Footer";
 import Navbar from "@/components/layout/Navbar";
 import FloatingWhatsApp from "@/components/shared/FloatingWhatsApp";
+import SmoothScroll from "@/components/shared/SmoothScroll";
 import { SITE_NAME, SITE_URL, SOCIAL_LINKS } from "@/lib/constants";
 import type { Metadata } from "next";
 import { Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
@@ -120,6 +121,7 @@ export default function RootLayout({
           // biome-ignore lint/security/noDangerouslySetInnerHtml: static JSON-LD structured data for SEO
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+        <SmoothScroll />
         <Navbar />
         <main className="min-h-dvh pt-16 flex flex-col">
           <div className="flex-1">{children}</div>
