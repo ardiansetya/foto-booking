@@ -67,18 +67,20 @@ export default function Footer() {
                 </li>
                 <li>
                   <a
+                    href={SOCIAL_LINKS.instagramWedding}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-amber-500 dark:hover:text-amber-400 transition-colors">
+                    Instagram Wedding
+                  </a>
+                </li>
+                <li>
+                  <a
                     href={SOCIAL_LINKS.tiktok}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="hover:text-amber-500 dark:hover:text-amber-400 transition-colors">
                     TikTok
-                  </a>
-                </li>
-                <li className="break-all">
-                  <a
-                    href={`mailto:${SOCIAL_LINKS.email}`}
-                    className="hover:text-amber-500 dark:hover:text-amber-400 transition-colors">
-                    {SOCIAL_LINKS.email}
                   </a>
                 </li>
               </ul>

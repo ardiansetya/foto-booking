@@ -73,9 +73,12 @@ const jsonLd = {
   description:
     "Jasa fotografi wisuda dan wedding profesional dengan kualitas sinematik. Melayani area Solo, Semarang, Jogja, Salatiga, dan Kudus.",
   url: SITE_URL,
-  email: SOCIAL_LINKS.email,
   areaServed: ["Solo", "Semarang", "Jogja", "Salatiga", "Kudus"],
-  sameAs: [SOCIAL_LINKS.instagram, SOCIAL_LINKS.tiktok],
+  sameAs: [
+    SOCIAL_LINKS.instagram,
+    SOCIAL_LINKS.instagramWedding,
+    SOCIAL_LINKS.tiktok,
+  ],
   makesOffer: [
     { "@type": "Offer", name: "Omegraduation Bronze" },
     { "@type": "Offer", name: "Omegraduation Silver" },
