@@ -6,7 +6,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/format-chat-client", "/pilih-foto"],
+      disallow: ["/format-chat-client", "/pilih-foto", "/admin"],
     },
     sitemap: `${SITE_URL}/sitemap.xml`,
   };

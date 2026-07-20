@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { PORTFOLIO_IMAGES } from "@/lib/data";
+import type { GalleryPhoto } from "@/lib/gallery";
 import ResponsiveImage from "../shared/ResponsiveImage";
 import ScrollReveal from "../shared/ScrollReveal";
 import Lightbox from "./Lightbox";
@@ -14,14 +14,14 @@ const CATEGORIES = [
   { id: "family", label: "Family" },
 ] as const;
 
-export default function GalleryGrid() {
+export default function GalleryGrid({ photos }: { photos: GalleryPhoto[] }) {
   const [selectedCat, setSelectedCat] = useState<string>("all");
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   const filteredImages =
     selectedCat === "all"
-      ? PORTFOLIO_IMAGES
-      : PORTFOLIO_IMAGES.filter((img) => img.category === selectedCat);
+      ? photos
+      : photos.filter((img) => img.category === selectedCat);
 
   return (
     <div>
@@ -58,6 +58,8 @@ export default function GalleryGrid() {
               <ResponsiveImage
                 src={img.src}
                 alt={img.alt}
+                width={img.width}
+                height={img.height}
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                 className="w-full transition-transform duration-500 group-hover:scale-[1.02]"
               />

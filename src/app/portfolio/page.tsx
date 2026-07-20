@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import GalleryGrid from "@/components/portfolio/GalleryGrid";
+import { getGalleryPhotos } from "@/lib/gallery";
 
 export const metadata: Metadata = {
   title: "Galeri Foto Wisuda & Wedding",
@@ -8,7 +9,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "/portfolio" },
 };
 
-export default function PortfolioPage() {
+export default async function PortfolioPage() {
+  const photos = await getGalleryPhotos();
   return (
     <div className="bg-zinc-50 dark:bg-zinc-950 min-h-screen py-16 md:py-24 transition-colors duration-300">
       <div className="mx-auto max-w-7xl px-4 md:px-8">
@@ -27,7 +29,7 @@ export default function PortfolioPage() {
         </div>
 
         {/* Gallery Grid Client Island */}
-        <GalleryGrid />
+        <GalleryGrid photos={photos} />
       </div>
     </div>
   );

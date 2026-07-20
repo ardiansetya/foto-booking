@@ -1,10 +1,16 @@
 import Link from "next/link";
-import { PORTFOLIO_IMAGES } from "@/lib/data";
+import { getFeaturedPhotos, getGalleryPhotos } from "@/lib/gallery";
 import ResponsiveImage from "../shared/ResponsiveImage";
 import ScrollReveal from "../shared/ScrollReveal";
 
-export default function SelectedWorks() {
-  const featuredWorks = PORTFOLIO_IMAGES.filter((img) => img.featured);
+export default async function SelectedWorks() {
+  const featured = await getFeaturedPhotos();
+  const featuredWorks =
+    featured.length > 0
+      ? featured.slice(0, 6)
+      : (await getGalleryPhotos()).slice(0, 5);
+
+  if (featuredWorks.length === 0) return null;
 
   return (
     <section className="bg-zinc-50 dark:bg-zinc-950 py-24 md:py-32 transition-colors duration-300">

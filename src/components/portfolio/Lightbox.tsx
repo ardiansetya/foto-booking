@@ -2,10 +2,10 @@
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
-import type { PortfolioImage } from "@/lib/types";
+import type { GalleryPhoto } from "@/lib/gallery";
 
 interface LightboxProps {
-  images: PortfolioImage[];
+  images: GalleryPhoto[];
   currentIndex: number;
   isOpen: boolean;
   onClose: () => void;
