@@ -1,6 +1,14 @@
 "use client";
 
-import { Eye, EyeOff, LogOut, Star, Trash2, Upload } from "lucide-react";
+import {
+  DatabaseZap,
+  Eye,
+  EyeOff,
+  LogOut,
+  Star,
+  Trash2,
+  Upload,
+} from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
@@ -21,9 +29,32 @@ export default function AdminGallery({
   const [tab, setTab] = useState<GalleryCategory>(categories[0].id);
   const [busy, setBusy] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [migrating, setMigrating] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const photos = initialPhotos.filter((p) => p.category === tab);
+  const seedRemaining = initialPhotos.filter(
+    (p) => !p.managed && !p.hidden,
+  ).length;
+
+  const migrate = async () => {
+    if (
+      !confirm(
+        `Pindahkan ${seedRemaining} foto bawaan ke Blob agar bisa dihapus? Proses ini aman diulang.`,
+      )
+    )
+      return;
+    setMigrating(true);
+    const res = await fetch("/api/admin/migrate", { method: "POST" });
+    const data = (await res.json().catch(() => ({}))) as { migrated?: number };
+    setMigrating(false);
+    alert(
+      res.ok
+        ? `${data.migrated ?? 0} foto berhasil dipindahkan.`
+        : "Gagal memindahkan foto.",
+    );
+    refresh();
+  };
 
   const refresh = () => router.refresh();
 
@@ -106,6 +137,25 @@ export default function AdminGallery({
           Keluar
         </button>
       </div>
+
+      {/* Migrate repo photos to Blob */}
+      {blobReady && seedRemaining > 0 && (
+        <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-xl border border-amber-200 dark:border-amber-900/50 bg-amber-50 dark:bg-amber-950/20 p-4">
+          <p className="text-sm text-amber-800 dark:text-amber-300">
+            Ada {seedRemaining} foto bawaan yang belum bisa dihapus. Pindahkan
+            ke Blob agar bisa dikelola penuh.
+          </p>
+          <button
+            type="button"
+            disabled={migrating}
+            onClick={migrate}
+            className="shrink-0 inline-flex items-center gap-2 rounded-full bg-amber-400 px-5 py-2.5 text-sm font-medium text-zinc-950 transition-colors hover:bg-amber-300 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none"
+          >
+            <DatabaseZap className="h-4 w-4" />
+            {migrating ? "Memindahkan..." : "Pindahkan ke Blob"}
+          </button>
+        </div>
+      )}
 
       {/* Upload */}
       {blobReady && (
