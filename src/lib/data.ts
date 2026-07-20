@@ -42,6 +42,10 @@ import grub1 from "@/assets/images/grub/ERC07921.webp";
 import grub2 from "@/assets/images/grub/ERC00191.webp";
 // Wedding
 import wedding1 from "@/assets/images/wedding/ERC00486.webp";
+import wedding2 from "@/assets/images/wedding/ERC00459.webp";
+import wedding3 from "@/assets/images/wedding/ERC00471.webp";
+import wedding4 from "@/assets/images/wedding/ERC00505.webp";
+import wedding5 from "@/assets/images/wedding/ERC00508.webp";
 
 // Hero landscape 16:9 (object-cover crops to fit)
 export const HERO_IMAGE: StaticImageData = grub1;
@@ -86,7 +90,13 @@ const family: StaticImageData[] = [
   fam14,
 ];
 const group: StaticImageData[] = [grub1, grub2];
-const wedding: StaticImageData[] = [wedding1];
+const wedding: StaticImageData[] = [
+  wedding1,
+  wedding2,
+  wedding3,
+  wedding4,
+  wedding5,
+];
 
 const CATEGORY_META: Record<
   PortfolioImage["category"],
