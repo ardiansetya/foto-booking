@@ -26,7 +26,6 @@ import couple7 from "@/assets/images/couple/ERC02908.webp";
 import fam1 from "@/assets/images/fam/ACP00161.webp";
 import fam2 from "@/assets/images/fam/ACP00222.webp";
 import fam3 from "@/assets/images/fam/ACP00256.webp";
-import fam4 from "@/assets/images/fam/ACP08569.webp";
 import fam5 from "@/assets/images/fam/ERC00004.webp";
 import fam6 from "@/assets/images/fam/ERC00161.webp";
 import fam7 from "@/assets/images/fam/ERC00456.webp";
@@ -77,7 +76,6 @@ const family: StaticImageData[] = [
   fam1,
   fam2,
   fam3,
-  fam4,
   fam5,
   fam6,
   fam7,
