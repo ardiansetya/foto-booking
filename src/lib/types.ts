@@ -1,9 +1,9 @@
+import type { StaticImageData } from "next/image";
+
 export interface PortfolioImage {
   id: string;
-  src: string;
+  src: StaticImageData;
   alt: string;
-  width: number;
-  height: number;
   category: "personal" | "couple" | "wedding" | "group" | "family";
   featured?: boolean;
 }

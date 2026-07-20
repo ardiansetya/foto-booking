@@ -1,83 +1,125 @@
+import type { StaticImageData } from "next/image";
 import type { FAQ, Package, PortfolioImage, Testimonial } from "./types";
 
-export const PORTFOLIO_IMAGES: PortfolioImage[] = [
-  {
-    id: "personal-1",
-    src: "https://picsum.photos/seed/graduation-personal-1/800/1200",
-    alt: "Foto Wisuda Personal Studio - Portrait Kelulusan Tunggal",
-    width: 800,
-    height: 1200,
-    category: "personal",
-    featured: true,
-  },
-  {
-    id: "couple-1",
-    src: "https://picsum.photos/seed/graduation-couple-1/800/1200",
-    alt: "Foto Wisuda Couple - Dokumentasi Wisuda Pasangan Romantis",
-    width: 800,
-    height: 1200,
-    category: "couple",
-    featured: true,
-  },
-  {
-    id: "wedding-1",
-    src: "https://picsum.photos/seed/wedding-moment-1/1200/800",
-    alt: "Foto Wedding - Dokumentasi Momen Pernikahan Sinematik",
-    width: 1200,
-    height: 800,
-    category: "wedding",
-    featured: true,
-  },
-  {
-    id: "family-1",
-    src: "https://picsum.photos/seed/graduation-family-1/1200/800",
-    alt: "Foto Wisuda Keluarga - Momen Hangat Bersama Orang Tua",
-    width: 1200,
-    height: 800,
-    category: "family",
-    featured: true,
-  },
-  {
-    id: "personal-2",
-    src: "https://picsum.photos/seed/graduation-personal-2/800/1200",
-    alt: "Foto Wisuda Personal Outdoor - Pose Membawa Ijazah",
-    width: 800,
-    height: 1200,
-    category: "personal",
-  },
-  {
-    id: "group-1",
-    src: "https://picsum.photos/seed/graduation-group-1/1200/800",
-    alt: "Foto Wisuda Group - Kelompok Kelas Kelulusan Besar",
-    width: 1200,
-    height: 800,
-    category: "group",
-  },
-  {
-    id: "couple-2",
-    src: "https://picsum.photos/seed/graduation-couple-2/800/1200",
-    alt: "Foto Wisuda Couple Outdoor - Pose Bersanding Bahagia",
-    width: 800,
-    height: 1200,
-    category: "couple",
-  },
-  {
-    id: "wedding-2",
-    src: "https://picsum.photos/seed/wedding-moment-2/800/1200",
-    alt: "Foto Wedding Outdoor - Sesi Pemotretan Pasangan Pengantin",
-    width: 800,
-    height: 1200,
-    category: "wedding",
-  },
-  {
-    id: "personal-3",
-    src: "https://picsum.photos/seed/graduation-personal-3/800/1200",
-    alt: "Foto Wisuda Personal Studio - Ekspresi Kelulusan Ceria",
-    width: 800,
-    height: 1200,
-    category: "personal",
-  },
+// Personal (solo)
+import solo1 from "@/assets/images/solo/IMG_8156.webp";
+import solo2 from "@/assets/images/solo/ERC00884.webp";
+import solo3 from "@/assets/images/solo/ERC00594.webp";
+import solo4 from "@/assets/images/solo/ACP08747.webp";
+import solo5 from "@/assets/images/solo/ERC02862.webp";
+import solo6 from "@/assets/images/solo/ISA04185.webp";
+import solo7 from "@/assets/images/solo/IMG_8121.webp";
+import solo8 from "@/assets/images/solo/IMG_8114.webp";
+import solo9 from "@/assets/images/solo/ERC00239.webp";
+import solo10 from "@/assets/images/solo/ERC00112.webp";
+import solo11 from "@/assets/images/solo/IMG_1405.webp";
+import solo12 from "@/assets/images/solo/RYN00342.webp";
+// Couple
+import couple1 from "@/assets/images/couple/IMG_3868.webp";
+import couple2 from "@/assets/images/couple/DSN03443.webp";
+import couple3 from "@/assets/images/couple/ERC00416.webp";
+import couple4 from "@/assets/images/couple/ERC00418.webp";
+import couple5 from "@/assets/images/couple/ERC00420.webp";
+import couple6 from "@/assets/images/couple/ERC02904.webp";
+import couple7 from "@/assets/images/couple/ERC02908.webp";
+// Family (fam)
+import fam1 from "@/assets/images/fam/ACP00161.webp";
+import fam2 from "@/assets/images/fam/ACP00222.webp";
+import fam3 from "@/assets/images/fam/ACP00256.webp";
+import fam4 from "@/assets/images/fam/ACP08569.webp";
+import fam5 from "@/assets/images/fam/ERC00004.webp";
+import fam6 from "@/assets/images/fam/ERC00161.webp";
+import fam7 from "@/assets/images/fam/ERC00456.webp";
+import fam8 from "@/assets/images/fam/ERC02957.webp";
+import fam9 from "@/assets/images/fam/ERC07612.webp";
+import fam10 from "@/assets/images/fam/ERC07695.webp";
+import fam11 from "@/assets/images/fam/IMG_1260.webp";
+import fam12 from "@/assets/images/fam/ktm.webp";
+import fam13 from "@/assets/images/fam/RYN00101.webp";
+import fam14 from "@/assets/images/fam/ZYDN4107.webp";
+// Group (grub)
+import grub1 from "@/assets/images/grub/ERC07921.webp";
+import grub2 from "@/assets/images/grub/ERC00191.webp";
+// Wedding
+import wedding1 from "@/assets/images/wedding/ERC00486.webp";
+
+// Hero landscape 16:9 (object-cover crops to fit)
+export const HERO_IMAGE: StaticImageData = grub1;
+
+const personal: StaticImageData[] = [
+  solo1,
+  solo2,
+  solo3,
+  solo4,
+  solo5,
+  solo6,
+  solo7,
+  solo8,
+  solo9,
+  solo10,
+  solo11,
+  solo12,
 ];
+const couple: StaticImageData[] = [
+  couple1,
+  couple2,
+  couple3,
+  couple4,
+  couple5,
+  couple6,
+  couple7,
+];
+const family: StaticImageData[] = [
+  fam1,
+  fam2,
+  fam3,
+  fam4,
+  fam5,
+  fam6,
+  fam7,
+  fam8,
+  fam9,
+  fam10,
+  fam11,
+  fam12,
+  fam13,
+  fam14,
+];
+const group: StaticImageData[] = [grub1, grub2];
+const wedding: StaticImageData[] = [wedding1];
+
+const CATEGORY_META: Record<
+  PortfolioImage["category"],
+  { images: StaticImageData[]; alt: string }
+> = {
+  personal: { images: personal, alt: "Foto Wisuda Personal" },
+  couple: { images: couple, alt: "Foto Wisuda Couple" },
+  family: { images: family, alt: "Foto Wisuda Bersama Keluarga" },
+  group: { images: group, alt: "Foto Wisuda Group" },
+  wedding: { images: wedding, alt: "Foto Wedding" },
+};
+
+// One featured photo per category for the home "Momen Pilihan" section.
+const FEATURED_INDEX: Partial<Record<PortfolioImage["category"], number>> = {
+  personal: 0,
+  couple: 0,
+  family: 0,
+  group: 0,
+  wedding: 0,
+};
+
+export const PORTFOLIO_IMAGES: PortfolioImage[] = (
+  Object.keys(CATEGORY_META) as PortfolioImage["category"][]
+).flatMap((category) => {
+  const { images, alt } = CATEGORY_META[category];
+  return images.map((src, i) => ({
+    id: `${category}-${i + 1}`,
+    src,
+    alt: `${alt} ${i + 1}`,
+    category,
+    featured: FEATURED_INDEX[category] === i,
+  }));
+});
 
 export const PACKAGES: Package[] = [
   {

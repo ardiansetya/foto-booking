@@ -1,17 +1,15 @@
 import Link from "next/link";
-import { PORTFOLIO_IMAGES } from "@/lib/data";
+import { HERO_IMAGE } from "@/lib/data";
 import ResponsiveImage from "../shared/ResponsiveImage";
 
 export default function Hero() {
-  const heroImage = PORTFOLIO_IMAGES[0]; // First image from portfolio
-
   return (
     <section className="relative h-[calc(100dvh-4rem)] min-h-[500px] w-full overflow-hidden bg-zinc-100 dark:bg-zinc-950 transition-colors duration-300">
-      {/* Background Image */}
+      {/* Background Image (landscape 16:9, cropped by object-cover) */}
       <div className="absolute inset-0 z-0">
         <ResponsiveImage
-          src={heroImage.src}
-          alt={heroImage.alt}
+          src={HERO_IMAGE}
+          alt="Foto Wisuda Omegraduation"
           fill
           priority
           sizes="100vw"

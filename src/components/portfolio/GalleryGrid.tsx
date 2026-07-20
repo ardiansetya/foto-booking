@@ -58,8 +58,7 @@ export default function GalleryGrid() {
               <ResponsiveImage
                 src={img.src}
                 alt={img.alt}
-                width={img.width}
-                height={img.height}
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                 className="w-full transition-transform duration-500 group-hover:scale-[1.02]"
               />
               {/* Subtle hover detail */}
