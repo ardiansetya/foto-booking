@@ -2,8 +2,13 @@ import Footer from "@/components/layout/Footer";
 import Navbar from "@/components/layout/Navbar";
 import FloatingWhatsApp from "@/components/shared/FloatingWhatsApp";
 import SmoothScroll from "@/components/shared/SmoothScroll";
-import { SITE_NAME, SITE_URL, SOCIAL_LINKS } from "@/lib/constants";
-import type { Metadata } from "next";
+import {
+  SITE_NAME,
+  SITE_URL,
+  SOCIAL_LINKS,
+  WHATSAPP_NUMBER,
+} from "@/lib/constants";
+import type { Metadata, Viewport } from "next";
 import { Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
@@ -25,6 +30,11 @@ export const metadata: Metadata = {
   },
   description:
     "Jasa foto wisuda dan wedding profesional dengan kualitas sinematik. Area Solo, Semarang, Jogja, Salatiga, Kudus. Booking mudah via WhatsApp.",
+  applicationName: SITE_NAME,
+  authors: [{ name: SITE_NAME, url: SITE_URL }],
+  creator: SITE_NAME,
+  publisher: SITE_NAME,
+  category: "photography",
   keywords: [
     "jasa foto wisuda",
     "fotografer wisuda",
@@ -35,9 +45,15 @@ export const metadata: Metadata = {
     "foto graduation",
     "foto wisuda solo semarang jogja",
     "foto wedding solo semarang jogja",
+    "omegraduation",
   ],
   alternates: {
     canonical: "/",
+  },
+  formatDetection: {
+    telephone: false,
+    address: false,
+    email: false,
   },
   robots: {
     index: true,
@@ -46,6 +62,7 @@ export const metadata: Metadata = {
       index: true,
       follow: true,
       "max-image-preview": "large",
+      "max-video-preview": -1,
       "max-snippet": -1,
     },
   },
@@ -66,14 +83,29 @@ export const metadata: Metadata = {
   },
 };
 
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#fafafa" },
+    { media: "(prefers-color-scheme: dark)", color: "#09090b" },
+  ],
+  colorScheme: "light dark",
+};
+
 const jsonLd = {
   "@context": "https://schema.org",
-  "@type": "ProfessionalService",
+  "@type": "LocalBusiness",
+  "@id": `${SITE_URL}/#business`,
   name: SITE_NAME,
   description:
     "Jasa fotografi wisuda dan wedding profesional dengan kualitas sinematik. Melayani area Solo, Semarang, Jogja, Salatiga, dan Kudus.",
   url: SITE_URL,
-  areaServed: ["Solo", "Semarang", "Jogja", "Salatiga", "Kudus"],
+  image: `${SITE_URL}/opengraph-image`,
+  logo: `${SITE_URL}/icon`,
+  telephone: `+${WHATSAPP_NUMBER}`,
+  priceRange: "Rp",
+  areaServed: ["Solo", "Semarang", "Jogja", "Salatiga", "Kudus"].map(
+    (city) => ({ "@type": "City", name: city }),
+  ),
   sameAs: [
     SOCIAL_LINKS.instagram,
     SOCIAL_LINKS.instagramWedding,

@@ -1,4 +1,4 @@
-export const SITE_URL = "https://foto-booking-chi.vercel.app"; // Ganti dengan domain custom jika sudah ada
+export const SITE_URL = "https://omegraduation.com";
 export const SITE_NAME = "Omegraduation";
 
 export const WHATSAPP_NUMBER = "6285700511160"; // Ganti dengan nomor WhatsApp asli
