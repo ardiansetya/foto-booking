@@ -15,12 +15,14 @@ export async function POST(request: Request) {
       body,
       request,
       onBeforeGenerateToken: async () => {
-        const cookie = request.headers
-          .get("cookie")
-          ?.split(";")
+        const raw = request.headers.get("cookie") ?? "";
+        const entry = raw
+          .split(";")
           .map((c) => c.trim())
-          .find((c) => c.startsWith(`${ADMIN_COOKIE}=`))
-          ?.split("=")[1];
+          .find((c) => c.startsWith(`${ADMIN_COOKIE}=`));
+        const cookie = entry
+          ? decodeURIComponent(entry.slice(ADMIN_COOKIE.length + 1))
+          : undefined;
         if (!(await isValidToken(cookie))) {
           throw new Error("Not authorized");
         }
