@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { AdminPhoto, GalleryCategory } from "@/lib/gallery";
 
 type Item = AdminPhoto & { temp?: boolean };
@@ -66,6 +66,7 @@ export default function AdminGallery({
   const qc = useQueryClient();
   const [tab, setTab] = useState<GalleryCategory>(categories[0].id);
   const [temps, setTemps] = useState<Item[]>([]);
+  const [pending, setPending] = useState<Item[]>([]); // uploaded, awaiting manifest propagation
   const [uploading, setUploading] = useState(false);
   const [cleaning, setCleaning] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -156,12 +157,13 @@ export default function AdminGallery({
     setTemps((prev) => [...prev, ...newTemps]);
     setUploading(true);
 
-    await Promise.all(
-      arr.map(async (file) => {
+    const uploadCat = tab;
+    const results = await Promise.all(
+      arr.map(async (file): Promise<Item | null> => {
         try {
           const { blob, width, height } = await toWebp(file);
           const id = crypto.randomUUID();
-          const result = await upload(`gallery/${tab}/${id}.webp`, blob, {
+          const result = await upload(`gallery/${uploadCat}/${id}.webp`, blob, {
             access: "public",
             handleUploadUrl: "/api/blob-upload",
             contentType: "image/webp",
@@ -174,12 +176,22 @@ export default function AdminGallery({
               src: result.url,
               width,
               height,
-              alt: `Foto ${tab}`,
-              category: tab,
+              alt: `Foto ${uploadCat}`,
+              category: uploadCat,
             }),
           });
+          return {
+            id,
+            src: result.url,
+            width,
+            height,
+            alt: `Foto ${uploadCat}`,
+            category: uploadCat,
+            managed: true,
+            hidden: false,
+          };
         } catch {
-          // skip failed file
+          return null;
         }
       }),
     );
@@ -188,7 +200,13 @@ export default function AdminGallery({
     if (fileRef.current) fileRef.current.value = "";
     for (const t of newTemps) URL.revokeObjectURL(t.src);
     setTemps((prev) => prev.filter((t) => !newTemps.includes(t)));
-    qc.invalidateQueries({ queryKey: KEY });
+
+    // Keep uploaded photos visible until the (CDN-cached) manifest catches up.
+    const uploaded = results.filter((r): r is Item => r !== null);
+    setPending((prev) => [...prev, ...uploaded]);
+    for (const delay of [0, 2500, 6000]) {
+      setTimeout(() => qc.invalidateQueries({ queryKey: KEY }), delay);
+    }
   };
 
   const logout = async () => {
@@ -197,8 +215,15 @@ export default function AdminGallery({
     router.refresh();
   };
 
+  // Drop pending once the refetched list includes them.
+  useEffect(() => {
+    setPending((prev) => prev.filter((p) => !list.some((l) => l.id === p.id)));
+  }, [list]);
+
+  const listIds = new Set(list.map((p) => p.id));
   const photos: Item[] = [
     ...temps.filter((p) => p.category === tab),
+    ...pending.filter((p) => p.category === tab && !listIds.has(p.id)),
     ...list.filter((p) => p.category === tab),
   ];
 
