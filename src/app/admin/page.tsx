@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import AdminGallery from "@/components/admin/AdminGallery";
 import { GALLERY_CATEGORIES, getAdminPhotos } from "@/lib/gallery";
+import Providers from "./Providers";
 
 export const metadata: Metadata = {
   title: "Admin Galeri",
@@ -33,11 +34,13 @@ export default async function AdminPage() {
           </div>
         )}
 
-        <AdminGallery
-          initialPhotos={photos}
-          categories={GALLERY_CATEGORIES}
-          blobReady={blobReady}
-        />
+        <Providers>
+          <AdminGallery
+            initialPhotos={photos}
+            categories={GALLERY_CATEGORIES}
+            blobReady={blobReady}
+          />
+        </Providers>
       </div>
     </div>
   );

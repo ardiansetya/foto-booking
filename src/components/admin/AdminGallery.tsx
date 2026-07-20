@@ -1,17 +1,51 @@
 "use client";
 
+import { upload } from "@vercel/blob/client";
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { Eye, EyeOff, Loader2, LogOut, Star, Trash2, Upload } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import type { AdminPhoto, GalleryCategory } from "@/lib/gallery";
 
 type Item = AdminPhoto & { temp?: boolean };
+
+const KEY = ["admin-photos"] as const;
 
 interface Props {
   initialPhotos: AdminPhoto[];
   categories: { id: GalleryCategory; label: string }[];
   blobReady: boolean;
+}
+
+async function toWebp(
+  file: File,
+): Promise<{ blob: Blob; width: number; height: number }> {
+  const bitmap = await createImageBitmap(file);
+  let { width, height } = bitmap;
+  const max = 2000;
+  if (width > max || height > max) {
+    const s = Math.min(max / width, max / height);
+    width = Math.round(width * s);
+    height = Math.round(height * s);
+  }
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+  canvas.getContext("2d")?.drawImage(bitmap, 0, 0, width, height);
+  const blob = await new Promise<Blob>((res, rej) =>
+    canvas.toBlob(
+      (b) => (b ? res(b) : rej(new Error("convert_failed"))),
+      "image/webp",
+      0.82,
+    ),
+  );
+  bitmap.close();
+  return { blob, width, height };
 }
 
 export default function AdminGallery({
@@ -20,43 +54,72 @@ export default function AdminGallery({
   blobReady,
 }: Props) {
   const router = useRouter();
+  const qc = useQueryClient();
   const [tab, setTab] = useState<GalleryCategory>(categories[0].id);
-  const [list, setList] = useState<Item[]>(initialPhotos);
+  const [temps, setTemps] = useState<Item[]>([]);
   const [uploading, setUploading] = useState(false);
-  const [migrating, setMigrating] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
-  const migrateStarted = useRef(false);
 
-  // Re-sync with server truth after any router.refresh().
-  useEffect(() => {
-    setList(initialPhotos);
-  }, [initialPhotos]);
+  const { data: list = [] } = useQuery({
+    queryKey: KEY,
+    queryFn: async (): Promise<AdminPhoto[]> => {
+      const res = await fetch("/api/admin/photo");
+      if (!res.ok) throw new Error("fetch_failed");
+      const data = (await res.json()) as { photos: AdminPhoto[] };
+      return data.photos;
+    },
+    initialData: initialPhotos,
+  });
 
-  const photos = list.filter((p) => p.category === tab);
-  const seedRemaining = list.filter((p) => !p.managed && !p.hidden).length;
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) =>
+      fetch("/api/admin/photo", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      }),
+    onMutate: async (id) => {
+      await qc.cancelQueries({ queryKey: KEY });
+      const prev = qc.getQueryData<AdminPhoto[]>(KEY);
+      qc.setQueryData<AdminPhoto[]>(KEY, (old = []) => {
+        const target = old.find((p) => p.id === id);
+        return target?.managed
+          ? old.filter((p) => p.id !== id)
+          : old.map((p) => (p.id === id ? { ...p, hidden: true } : p));
+      });
+      return { prev };
+    },
+    onError: (_e, _id, ctx) => {
+      if (ctx?.prev) qc.setQueryData(KEY, ctx.prev);
+    },
+    onSettled: () => qc.invalidateQueries({ queryKey: KEY }),
+  });
 
-  // One-time auto migration of repo seed photos into Blob (no button).
-  useEffect(() => {
-    if (!blobReady || seedRemaining === 0 || migrateStarted.current) return;
-    migrateStarted.current = true;
-    setMigrating(true);
-    (async () => {
-      for (let i = 0; i < 10; i++) {
-        const res = await fetch("/api/admin/migrate", { method: "POST" });
-        const data = (await res.json().catch(() => ({}))) as {
-          remaining?: number;
-        };
-        if (!res.ok || (data.remaining ?? 0) === 0) break;
-      }
-      setMigrating(false);
-      router.refresh();
-    })();
-  }, [blobReady, seedRemaining, router]);
+  const patchMutation = useMutation({
+    mutationFn: (v: { id: string; featured?: boolean; hidden?: boolean }) =>
+      fetch("/api/admin/photo", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(v),
+      }),
+    onMutate: async (v) => {
+      await qc.cancelQueries({ queryKey: KEY });
+      const prev = qc.getQueryData<AdminPhoto[]>(KEY);
+      qc.setQueryData<AdminPhoto[]>(KEY, (old = []) =>
+        old.map((p) => (p.id === v.id ? { ...p, ...v } : p)),
+      );
+      return { prev };
+    },
+    onError: (_e, _v, ctx) => {
+      if (ctx?.prev) qc.setQueryData(KEY, ctx.prev);
+    },
+    onSettled: () => qc.invalidateQueries({ queryKey: KEY }),
+  });
 
   const handleUpload = async (files: FileList | null) => {
     if (!files || files.length === 0) return;
     const arr = Array.from(files);
-    const temps: Item[] = arr.map((f) => ({
+    const newTemps: Item[] = arr.map((f) => ({
       id: `tmp-${crypto.randomUUID()}`,
       src: URL.createObjectURL(f),
       width: 1,
@@ -67,58 +130,42 @@ export default function AdminGallery({
       hidden: false,
       temp: true,
     }));
-    setList((prev) => [...temps, ...prev]); // show instantly
+    setTemps((prev) => [...prev, ...newTemps]);
     setUploading(true);
-    for (const file of arr) {
-      const form = new FormData();
-      form.append("file", file);
-      form.append("category", tab);
-      form.append("alt", `Foto ${tab}`);
-      await fetch("/api/admin/upload", { method: "POST", body: form });
-    }
+
+    await Promise.all(
+      arr.map(async (file) => {
+        try {
+          const { blob, width, height } = await toWebp(file);
+          const id = crypto.randomUUID();
+          const result = await upload(`gallery/${tab}/${id}.webp`, blob, {
+            access: "public",
+            handleUploadUrl: "/api/blob-upload",
+            contentType: "image/webp",
+          });
+          await fetch("/api/admin/photo", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              id,
+              src: result.url,
+              width,
+              height,
+              alt: `Foto ${tab}`,
+              category: tab,
+            }),
+          });
+        } catch {
+          // skip failed file
+        }
+      }),
+    );
+
     setUploading(false);
     if (fileRef.current) fileRef.current.value = "";
-    for (const t of temps) URL.revokeObjectURL(t.src);
-    router.refresh(); // reconcile temps with real photos
-  };
-
-  const del = async (id: string) => {
-    const target = list.find((p) => p.id === id);
-    if (!target) return;
-    if (
-      !confirm(
-        target.managed ? "Hapus foto ini?" : "Sembunyikan foto bawaan ini?",
-      )
-    )
-      return;
-    // Optimistic: managed -> remove, seed -> mark hidden.
-    setList((prev) =>
-      target.managed
-        ? prev.filter((p) => p.id !== id)
-        : prev.map((p) => (p.id === id ? { ...p, hidden: true } : p)),
-    );
-    const res = await fetch("/api/admin/photo", {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id }),
-    });
-    if (!res.ok) router.refresh(); // revert to server truth on failure
-  };
-
-  const patch = async (
-    id: string,
-    body: { featured?: boolean; hidden?: boolean },
-  ) => {
-    // Optimistic local update.
-    setList((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, ...body } : p)),
-    );
-    const res = await fetch("/api/admin/photo", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id, ...body }),
-    });
-    if (!res.ok) router.refresh();
+    for (const t of newTemps) URL.revokeObjectURL(t.src);
+    setTemps((prev) => prev.filter((t) => !newTemps.includes(t)));
+    qc.invalidateQueries({ queryKey: KEY });
   };
 
   const logout = async () => {
@@ -126,6 +173,11 @@ export default function AdminGallery({
     router.push("/admin/login");
     router.refresh();
   };
+
+  const photos: Item[] = [
+    ...temps.filter((p) => p.category === tab),
+    ...list.filter((p) => p.category === tab),
+  ];
 
   return (
     <div>
@@ -163,14 +215,6 @@ export default function AdminGallery({
         </button>
       </div>
 
-      {/* Auto migration notice */}
-      {migrating && (
-        <div className="mb-6 flex items-center gap-3 rounded-xl border border-amber-200 dark:border-amber-900/50 bg-amber-50 dark:bg-amber-950/20 p-4 text-sm text-amber-800 dark:text-amber-300">
-          <Loader2 className="h-4 w-4 animate-spin" />
-          Memindahkan foto bawaan ke penyimpanan... jangan tutup halaman.
-        </div>
-      )}
-
       {/* Upload */}
       {blobReady && (
         <div className="mb-8">
@@ -188,7 +232,11 @@ export default function AdminGallery({
             onClick={() => fileRef.current?.click()}
             className="inline-flex items-center gap-2 rounded-full bg-amber-400 px-6 py-3 text-sm font-medium text-zinc-950 transition-colors hover:bg-amber-300 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none"
           >
-            <Upload className="h-4 w-4" />
+            {uploading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Upload className="h-4 w-4" />
+            )}
             {uploading
               ? "Mengupload..."
               : `Upload Foto ${categories.find((c) => c.id === tab)?.label}`}
@@ -238,7 +286,9 @@ export default function AdminGallery({
                 <div className="flex items-center justify-between gap-1 p-2 bg-white dark:bg-zinc-900">
                   <button
                     type="button"
-                    onClick={() => patch(p.id, { featured: !p.featured })}
+                    onClick={() =>
+                      patchMutation.mutate({ id: p.id, featured: !p.featured })
+                    }
                     title={p.featured ? "Lepas unggulan" : "Jadikan unggulan"}
                     className={`p-1.5 rounded-md transition-colors ${
                       p.featured
@@ -252,7 +302,9 @@ export default function AdminGallery({
                   {p.hidden ? (
                     <button
                       type="button"
-                      onClick={() => patch(p.id, { hidden: false })}
+                      onClick={() =>
+                        patchMutation.mutate({ id: p.id, hidden: false })
+                      }
                       title="Tampilkan lagi"
                       className="p-1.5 rounded-md text-zinc-400 hover:text-emerald-500 transition-colors"
                     >
@@ -262,7 +314,10 @@ export default function AdminGallery({
                     <button
                       type="button"
                       disabled={!blobReady}
-                      onClick={() => del(p.id)}
+                      onClick={() => {
+                        if (confirm(p.managed ? "Hapus foto ini?" : "Sembunyikan foto bawaan?"))
+                          deleteMutation.mutate(p.id);
+                      }}
                       title={p.managed ? "Hapus foto" : "Sembunyikan foto"}
                       className="p-1.5 rounded-md text-zinc-400 hover:text-red-500 transition-colors disabled:opacity-40"
                     >

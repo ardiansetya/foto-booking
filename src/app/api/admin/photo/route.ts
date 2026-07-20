@@ -1,8 +1,47 @@
 import { del } from "@vercel/blob";
 import { NextResponse } from "next/server";
+import { type GalleryCategory, getAdminPhotos } from "@/lib/gallery";
 import { loadManifest, saveManifest } from "@/lib/galleryStore";
 
 export const runtime = "nodejs";
+
+// List all photos for the admin manager.
+export async function GET() {
+  return NextResponse.json({ photos: await getAdminPhotos() });
+}
+
+// Register a photo already uploaded to Blob by the client.
+export async function POST(request: Request) {
+  let body: {
+    id?: string;
+    src?: string;
+    width?: number;
+    height?: number;
+    alt?: string;
+    category?: GalleryCategory;
+  };
+  try {
+    body = (await request.json()) as typeof body;
+  } catch {
+    return NextResponse.json({ error: "bad_request" }, { status: 400 });
+  }
+  if (!body.id || !body.src || !body.category) {
+    return NextResponse.json({ error: "missing_fields" }, { status: 400 });
+  }
+
+  const manifest = await loadManifest();
+  manifest.photos.push({
+    id: body.id,
+    src: body.src,
+    width: body.width ?? 1200,
+    height: body.height ?? 800,
+    alt: body.alt || `Foto ${body.category}`,
+    category: body.category,
+    managed: true,
+  });
+  await saveManifest(manifest);
+  return NextResponse.json({ ok: true });
+}
 
 // Delete a photo. Managed (Blob) photos are removed; repo seed photos are hidden.
 export async function DELETE(request: Request) {
