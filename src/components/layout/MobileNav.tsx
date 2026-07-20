@@ -59,7 +59,7 @@ export default function MobileNav() {
                 onClick={() => setIsOpen(false)}
                 className="border-b border-zinc-200 dark:border-zinc-900 py-3 text-zinc-700 hover:text-emerald-500 dark:text-zinc-300 dark:hover:text-emerald-400 transition-colors"
               >
-                Portfolio
+                Galeri
               </Link>
               <Link
                 href="/packages"

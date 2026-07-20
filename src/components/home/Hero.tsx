@@ -48,7 +48,7 @@ export default function Hero() {
               href="/portfolio"
               className="inline-flex h-12 items-center justify-center rounded-full bg-amber-400 px-8 text-sm font-medium text-zinc-950 transition-colors hover:bg-amber-300 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-50 dark:focus-visible:ring-offset-zinc-950"
             >
-              Lihat Portfolio
+              Lihat Galeri
             </Link>
           </div>
         </div>

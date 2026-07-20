@@ -17,14 +17,14 @@ export default function SelectedWorks() {
                 Karya Terpilih
               </span> */}
               <h2 className="text-3xl font-bold tracking-tighter text-zinc-900 dark:text-zinc-50 sm:text-4xl md:text-5xl leading-tight">
-                Galeri Foto Unggulan
+                Momen Pilihan
               </h2>
             </div>
             <Link
               href="/portfolio"
               className="text-sm font-medium text-amber-600 hover:text-amber-500 dark:text-amber-400 dark:hover:text-amber-300 transition-colors focus-visible:outline-none"
             >
-              Lihat Semua Karya &rarr;
+              Jelajahi Galeri &rarr;
             </Link>
           </div>
         </ScrollReveal>

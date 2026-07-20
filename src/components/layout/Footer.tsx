@@ -32,7 +32,7 @@ export default function Footer() {
                   <Link
                     href="/portfolio"
                     className="hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors">
-                    Portfolio
+                    Galeri
                   </Link>
                 </li>
                 <li>
