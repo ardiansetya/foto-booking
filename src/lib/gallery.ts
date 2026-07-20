@@ -96,20 +96,18 @@ export interface AdminPhoto extends GalleryPhoto {
   hidden: boolean;
 }
 
-/** Every photo (incl. hidden seed) for the admin manager. */
+/** Photos for the admin manager: Blob uploads + seed not yet hidden/migrated. */
 export async function getAdminPhotos(): Promise<AdminPhoto[]> {
   const manifest = (await readManifest()) ?? EMPTY_MANIFEST;
   const withFeatured = (p: GalleryPhoto): boolean =>
     p.id in manifest.featured ? manifest.featured[p.id] : Boolean(p.featured);
-  const seed: AdminPhoto[] = STATIC_PHOTOS.map((p) => ({
-    ...p,
-    featured: withFeatured(p),
-    hidden: manifest.hidden.includes(p.id),
-  }));
+  const seed: AdminPhoto[] = STATIC_PHOTOS.filter(
+    (p) => !manifest.hidden.includes(p.id),
+  ).map((p) => ({ ...p, featured: withFeatured(p), hidden: false }));
   const managed: AdminPhoto[] = manifest.photos.map((p) => ({
     ...p,
     featured: withFeatured(p),
     hidden: false,
   }));
-  return [...seed, ...managed];
+  return [...managed, ...seed];
 }
