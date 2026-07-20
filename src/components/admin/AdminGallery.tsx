@@ -6,7 +6,16 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { Eye, EyeOff, Loader2, LogOut, Star, Trash2, Upload } from "lucide-react";
+import {
+  Eraser,
+  Eye,
+  EyeOff,
+  Loader2,
+  LogOut,
+  Star,
+  Trash2,
+  Upload,
+} from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
@@ -58,7 +67,21 @@ export default function AdminGallery({
   const [tab, setTab] = useState<GalleryCategory>(categories[0].id);
   const [temps, setTemps] = useState<Item[]>([]);
   const [uploading, setUploading] = useState(false);
+  const [cleaning, setCleaning] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+
+  const cleanup = async () => {
+    if (!confirm("Hapus file duplikat/orphan di penyimpanan?")) return;
+    setCleaning(true);
+    const res = await fetch("/api/admin/cleanup", { method: "POST" });
+    const data = (await res.json().catch(() => ({}))) as { deleted?: number };
+    setCleaning(false);
+    alert(
+      res.ok
+        ? `${data.deleted ?? 0} file duplikat dihapus.`
+        : "Gagal membersihkan.",
+    );
+  };
 
   const { data: list = [] } = useQuery({
     queryKey: KEY,
@@ -205,14 +228,32 @@ export default function AdminGallery({
             );
           })}
         </div>
-        <button
-          type="button"
-          onClick={logout}
-          className="inline-flex items-center gap-2 rounded-full border border-zinc-200 dark:border-zinc-800 px-4 py-2 text-sm text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
-        >
-          <LogOut className="h-4 w-4" />
-          Keluar
-        </button>
+        <div className="flex items-center gap-2">
+          {blobReady && (
+            <button
+              type="button"
+              disabled={cleaning}
+              onClick={cleanup}
+              title="Hapus file duplikat/orphan di penyimpanan"
+              className="inline-flex items-center gap-2 rounded-full border border-zinc-200 dark:border-zinc-800 px-4 py-2 text-sm text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors disabled:opacity-50"
+            >
+              {cleaning ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Eraser className="h-4 w-4" />
+              )}
+              Bersihkan
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={logout}
+            className="inline-flex items-center gap-2 rounded-full border border-zinc-200 dark:border-zinc-800 px-4 py-2 text-sm text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+          >
+            <LogOut className="h-4 w-4" />
+            Keluar
+          </button>
+        </div>
       </div>
 
       {/* Upload */}
