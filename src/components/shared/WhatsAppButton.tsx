@@ -6,15 +6,18 @@ interface WhatsAppButtonProps {
   message?: string;
   className?: string;
   children?: React.ReactNode;
+  onClick?: () => void;
 }
 
 export default function WhatsAppButton({
   className = "",
   children,
+  onClick,
 }: WhatsAppButtonProps) {
   return (
     <Link
       href="/#booking"
+      onClick={onClick}
       className={`inline-flex items-center justify-center gap-2 rounded-full bg-amber-400 px-6 py-3 font-medium text-zinc-950 transition-all duration-200 hover:bg-amber-300 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-50 dark:focus-visible:ring-offset-zinc-950 ${className}`}
     >
       <MessageCircle className="h-5 w-5" />

@@ -76,7 +76,10 @@ export default function MobileNav() {
                 SOP
               </Link>
               <div className="mt-8 flex flex-col">
-                <WhatsAppButton className="w-full py-4 text-base" />
+                <WhatsAppButton
+                  className="w-full py-4 text-base"
+                  onClick={() => setIsOpen(false)}
+                />
               </div>
             </nav>
           </motion.div>
