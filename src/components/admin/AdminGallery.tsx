@@ -2,7 +2,16 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { upload } from "@vercel/blob/client";
-import { Eraser, Eye, Loader2, LogOut, Star, Trash2, Upload } from "lucide-react";
+import {
+  Eraser,
+  Eye,
+  Loader2,
+  LogOut,
+  Star,
+  Trash2,
+  Upload,
+  Wrench,
+} from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -78,6 +87,7 @@ export default function AdminGallery({
   const [busyIds, setBusyIds] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
   const [cleaning, setCleaning] = useState(false);
+  const [repairing, setRepairing] = useState(false);
   const [confirmState, setConfirmState] = useState<Confirm | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -232,6 +242,23 @@ export default function AdminGallery({
     for (const delay of [0, 2000]) {
       setTimeout(() => qc.invalidateQueries({ queryKey: KEY }), delay);
     }
+  };
+
+  const runRepair = async () => {
+    setRepairing(true);
+    const res = await fetch("/api/admin/repair", { method: "POST" });
+    const data = (await res.json().catch(() => ({}))) as {
+      blobsFound?: number;
+      recovered?: number;
+      total?: number;
+    };
+    setRepairing(false);
+    setNotice(
+      res.ok
+        ? `Ditemukan ${data.blobsFound ?? 0} file di penyimpanan, ${data.recovered ?? 0} foto dipulihkan. Total sekarang ${data.total ?? 0}.`
+        : "Gagal memulihkan galeri.",
+    );
+    qc.invalidateQueries({ queryKey: KEY });
   };
 
   const runCleanup = async () => {
@@ -394,6 +421,29 @@ export default function AdminGallery({
             {uploading
               ? "Mengupload..."
               : `Upload Foto ${categories.find((c) => c.id === tab)?.label}`}
+          </button>
+        </div>
+      )}
+
+      {/* Recovery: manifest lost but photos may still be in storage */}
+      {blobReady && list.length === 0 && (
+        <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-xl border border-amber-200 dark:border-amber-900/50 bg-amber-50 dark:bg-amber-950/20 p-4">
+          <p className="text-sm text-amber-800 dark:text-amber-300">
+            Galeri kosong. Jika foto masih ada di penyimpanan, daftar foto bisa
+            dipulihkan.
+          </p>
+          <button
+            type="button"
+            disabled={repairing}
+            onClick={runRepair}
+            className="shrink-0 inline-flex items-center gap-2 rounded-full bg-amber-400 px-5 py-2.5 text-sm font-medium text-zinc-950 transition-colors hover:bg-amber-300 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none"
+          >
+            {repairing ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Wrench className="h-4 w-4" />
+            )}
+            {repairing ? "Memulihkan..." : "Pulihkan Galeri"}
           </button>
         </div>
       )}
