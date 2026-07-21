@@ -7,6 +7,7 @@ import {
   Eye,
   Loader2,
   LogOut,
+  MonitorPlay,
   Star,
   Trash2,
   Upload,
@@ -84,6 +85,7 @@ export default function AdminGallery({
   const [featuredOverride, setFeaturedOverride] = useState<
     Record<string, boolean>
   >({});
+  const [heroOverride, setHeroOverride] = useState<Record<string, boolean>>({});
   const [busyIds, setBusyIds] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
   const [cleaning, setCleaning] = useState(false);
@@ -139,7 +141,12 @@ export default function AdminGallery({
   });
 
   const patchMutation = useMutation({
-    mutationFn: (v: { id: string; featured?: boolean; hidden?: boolean }) =>
+    mutationFn: (v: {
+      id: string;
+      featured?: boolean;
+      hidden?: boolean;
+      hero?: boolean;
+    }) =>
       fetch("/api/admin/photo", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -155,12 +162,20 @@ export default function AdminGallery({
       if (typeof v.featured === "boolean") {
         setFeaturedOverride((o) => ({ ...o, [v.id]: v.featured as boolean }));
       }
+      if (typeof v.hero === "boolean") {
+        setHeroOverride((o) => ({ ...o, [v.id]: v.hero as boolean }));
+      }
       if (v.hidden === false) setRemoved((r) => r.filter((x) => x !== v.id));
       return { prev };
     },
     onError: (_e, v, ctx) => {
       if (ctx?.prev) qc.setQueryData(KEY, ctx.prev);
       setFeaturedOverride((o) => {
+        const next = { ...o };
+        delete next[v.id];
+        return next;
+      });
+      setHeroOverride((o) => {
         const next = { ...o };
         delete next[v.id];
         return next;
@@ -296,13 +311,16 @@ export default function AdminGallery({
     const pendingIds = new Set(pendingRef.current.map((p) => p.id));
     setPending((prev) => prev.filter((p) => !list.some((l) => l.id === p.id)));
     setRemoved((prev) => prev.filter((id) => list.some((l) => l.id === id)));
-    setFeaturedOverride((prev) => {
+    const release = (
+      prev: Record<string, boolean>,
+      read: (p: AdminPhoto) => boolean | undefined,
+    ) => {
       const next: Record<string, boolean> = {};
       let changed = false;
       for (const [id, v] of Object.entries(prev)) {
         const found = list.find((l) => l.id === id);
         if (found) {
-          if (Boolean(found.featured) !== v) next[id] = v;
+          if (Boolean(read(found)) !== v) next[id] = v;
           else changed = true;
         } else if (pendingIds.has(id)) {
           next[id] = v;
@@ -311,11 +329,18 @@ export default function AdminGallery({
         }
       }
       return changed ? next : prev;
-    });
+    };
+    setFeaturedOverride((prev) => release(prev, (p) => p.featured));
+    setHeroOverride((prev) => release(prev, (p) => p.hero));
   }, [list]);
 
-  const applyLocal = <T extends Item>(p: T): T =>
-    p.id in featuredOverride ? { ...p, featured: featuredOverride[p.id] } : p;
+  const applyLocal = <T extends Item>(p: T): T => {
+    let next = p;
+    if (p.id in featuredOverride)
+      next = { ...next, featured: featuredOverride[p.id] };
+    if (p.id in heroOverride) next = { ...next, hero: heroOverride[p.id] };
+    return next;
+  };
 
   const effective: AdminPhoto[] = list
     .filter((p) => !removed.includes(p.id))
@@ -489,11 +514,21 @@ export default function AdminGallery({
                       <Loader2 className="h-6 w-6 animate-spin text-white" />
                     </div>
                   )}
-                  {p.featured && !p.temp && (
-                    <span className="absolute top-2 left-2 inline-flex items-center gap-1 rounded-full bg-amber-400 px-2 py-0.5 text-[10px] font-semibold text-zinc-950">
-                      <Star className="h-3 w-3" />
-                      Unggulan
-                    </span>
+                  {!p.temp && (p.featured || p.hero) && (
+                    <div className="absolute top-2 left-2 flex flex-col items-start gap-1">
+                      {p.featured && (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-amber-400 px-2 py-0.5 text-[10px] font-semibold text-zinc-950">
+                          <Star className="h-3 w-3" />
+                          Unggulan
+                        </span>
+                      )}
+                      {p.hero && (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500 px-2 py-0.5 text-[10px] font-semibold text-white">
+                          <MonitorPlay className="h-3 w-3" />
+                          Hero
+                        </span>
+                      )}
+                    </div>
                   )}
                 </div>
 
@@ -513,6 +548,26 @@ export default function AdminGallery({
                       }`}
                     >
                       <Star className="h-4 w-4" />
+                    </button>
+
+                    <button
+                      type="button"
+                      disabled={busy}
+                      onClick={() =>
+                        patchMutation.mutate({ id: p.id, hero: !p.hero })
+                      }
+                      title={
+                        p.hero
+                          ? "Lepas dari hero"
+                          : "Pakai sebagai background hero"
+                      }
+                      className={`p-1.5 rounded-md transition-colors disabled:opacity-40 ${
+                        p.hero
+                          ? "text-emerald-500"
+                          : "text-zinc-400 hover:text-emerald-500"
+                      }`}
+                    >
+                      <MonitorPlay className="h-4 w-4" />
                     </button>
 
                     {p.hidden ? (

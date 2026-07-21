@@ -8,7 +8,7 @@ import {
 
 export async function loadManifest(): Promise<GalleryManifest> {
   const m = await readManifest();
-  if (!m) return { hidden: [], featured: {}, photos: [] };
+  if (!m) return { hidden: [], featured: {}, hero: {}, photos: [] };
   return m;
 }
 

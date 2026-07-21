@@ -39,9 +39,10 @@ export async function POST() {
   } while (cursor);
 
   const manifest = await loadManifest().catch(() => ({
-    hidden: [],
-    featured: {},
-    photos: [],
+    hidden: [] as string[],
+    featured: {} as Record<string, boolean>,
+    hero: {} as Record<string, boolean>,
+    photos: [] as GalleryPhoto[],
   }));
   const known = new Set(manifest.photos.map((p) => p.src));
   const missing = found.filter((f) => !known.has(f.url));

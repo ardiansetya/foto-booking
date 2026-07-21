@@ -91,7 +91,12 @@ export async function DELETE(request: Request) {
 
 // Update flags: toggle featured, or unhide a repo seed photo.
 export async function PATCH(request: Request) {
-  let body: { id?: string; featured?: boolean; hidden?: boolean };
+  let body: {
+    id?: string;
+    featured?: boolean;
+    hidden?: boolean;
+    hero?: boolean;
+  };
   try {
     body = (await request.json()) as typeof body;
   } catch {
@@ -104,6 +109,9 @@ export async function PATCH(request: Request) {
 
   if (typeof body.featured === "boolean") {
     manifest.featured[id] = body.featured;
+  }
+  if (typeof body.hero === "boolean") {
+    manifest.hero[id] = body.hero;
   }
   if (body.hidden === false) {
     manifest.hidden = manifest.hidden.filter((h) => h !== id);

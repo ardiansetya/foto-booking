@@ -24,6 +24,8 @@ export interface GalleryPhoto {
   alt: string;
   category: GalleryCategory;
   featured?: boolean;
+  /** shown as the hero background on the home page */
+  hero?: boolean;
   blurDataURL?: string;
   /** true = admin upload (Blob, deletable); false = repo seed photo */
   managed?: boolean;
@@ -32,6 +34,7 @@ export interface GalleryPhoto {
 export interface GalleryManifest {
   hidden: string[]; // ids of repo seed photos hidden by owner
   featured: Record<string, boolean>; // id -> featured override
+  hero: Record<string, boolean>; // id -> hero background override
   photos: GalleryPhoto[]; // admin uploads (Blob)
 }
 
@@ -40,6 +43,7 @@ export const MANIFEST_PATH = "gallery/manifest.json";
 export const EMPTY_MANIFEST: GalleryManifest = {
   hidden: [],
   featured: {},
+  hero: {},
   photos: [],
 };
 
@@ -63,6 +67,7 @@ export async function readManifest(): Promise<GalleryManifest | null> {
   return {
     hidden: data.hidden ?? [],
     featured: data.featured ?? {},
+    hero: data.hero ?? {},
     photos: data.photos ?? [],
   };
 }
@@ -84,6 +89,7 @@ function merge(manifest: GalleryManifest | null): GalleryPhoto[] {
     ...p,
     featured:
       p.id in manifest.featured ? manifest.featured[p.id] : p.featured,
+    hero: p.id in manifest.hero ? manifest.hero[p.id] : p.hero,
   }));
 }
 
@@ -96,6 +102,22 @@ export async function getFeaturedPhotos(): Promise<GalleryPhoto[]> {
   return (await getGalleryPhotos()).filter((p) => p.featured);
 }
 
+/**
+ * Hero background photos.
+ * One photo renders static, several rotate automatically.
+ * Falls back to a landscape featured photo when none are marked.
+ */
+export async function getHeroPhotos(): Promise<GalleryPhoto[]> {
+  const all = await getGalleryPhotos();
+  const chosen = all.filter((p) => p.hero);
+  if (chosen.length > 0) return chosen;
+
+  const pool = all.filter((p) => p.featured);
+  const source = pool.length > 0 ? pool : all;
+  const landscape = source.find((p) => p.width > p.height) ?? source[0];
+  return landscape ? [landscape] : [];
+}
+
 export interface AdminPhoto extends GalleryPhoto {
   hidden: boolean;
 }
@@ -105,13 +127,17 @@ export async function getAdminPhotos(): Promise<AdminPhoto[]> {
   const manifest = (await readManifest()) ?? EMPTY_MANIFEST;
   const withFeatured = (p: GalleryPhoto): boolean =>
     p.id in manifest.featured ? manifest.featured[p.id] : Boolean(p.featured);
-  const seed: AdminPhoto[] = STATIC_PHOTOS.filter(
-    (p) => !manifest.hidden.includes(p.id),
-  ).map((p) => ({ ...p, featured: withFeatured(p), hidden: false }));
-  const managed: AdminPhoto[] = manifest.photos.map((p) => ({
+  const withHero = (p: GalleryPhoto): boolean =>
+    p.id in manifest.hero ? manifest.hero[p.id] : Boolean(p.hero);
+  const decorate = (p: GalleryPhoto): AdminPhoto => ({
     ...p,
     featured: withFeatured(p),
+    hero: withHero(p),
     hidden: false,
-  }));
+  });
+  const seed = STATIC_PHOTOS.filter(
+    (p) => !manifest.hidden.includes(p.id),
+  ).map(decorate);
+  const managed = manifest.photos.map(decorate);
   return [...managed, ...seed];
 }
