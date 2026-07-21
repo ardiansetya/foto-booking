@@ -46,20 +46,31 @@ export const EMPTY_MANIFEST: GalleryManifest = {
 // All photos now live in Blob; no bundled seed photos remain.
 export const STATIC_PHOTOS: GalleryPhoto[] = [];
 
+/**
+ * Reads the manifest.
+ * Returns null only when it genuinely does not exist yet.
+ * Throws on read failure so callers never mistake an error for "empty",
+ * which previously let a cleanup wipe every photo.
+ */
 export async function readManifest(): Promise<GalleryManifest | null> {
   if (!process.env.BLOB_READ_WRITE_TOKEN) return null;
+  const { blobs } = await list({ prefix: MANIFEST_PATH });
+  const manifest = blobs.find((b) => b.pathname === MANIFEST_PATH);
+  if (!manifest) return null;
+  const res = await fetch(manifest.url, { cache: "no-store" });
+  if (!res.ok) throw new Error(`manifest_read_failed_${res.status}`);
+  const data = (await res.json()) as Partial<GalleryManifest>;
+  return {
+    hidden: data.hidden ?? [],
+    featured: data.featured ?? {},
+    photos: data.photos ?? [],
+  };
+}
+
+/** Read that never throws; for public pages where an empty gallery is acceptable. */
+async function readManifestSafe(): Promise<GalleryManifest | null> {
   try {
-    const { blobs } = await list({ prefix: MANIFEST_PATH });
-    const manifest = blobs.find((b) => b.pathname === MANIFEST_PATH);
-    if (!manifest) return null;
-    const res = await fetch(manifest.url, { cache: "no-store" });
-    if (!res.ok) return null;
-    const data = (await res.json()) as Partial<GalleryManifest>;
-    return {
-      hidden: data.hidden ?? [],
-      featured: data.featured ?? {},
-      photos: data.photos ?? [],
-    };
+    return await readManifest();
   } catch {
     return null;
   }
@@ -78,7 +89,7 @@ function merge(manifest: GalleryManifest | null): GalleryPhoto[] {
 
 /** Full gallery for public pages (seed minus hidden, plus admin uploads). */
 export async function getGalleryPhotos(): Promise<GalleryPhoto[]> {
-  return merge(await readManifest());
+  return merge(await readManifestSafe());
 }
 
 export async function getFeaturedPhotos(): Promise<GalleryPhoto[]> {

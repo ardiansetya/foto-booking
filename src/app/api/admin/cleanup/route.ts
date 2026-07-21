@@ -14,6 +14,13 @@ export async function POST() {
   }
 
   const manifest = await loadManifest();
+
+  // Safety: an empty manifest would mark every blob as an orphan and wipe
+  // the whole gallery. Refuse instead.
+  if (manifest.photos.length === 0) {
+    return NextResponse.json({ error: "manifest_empty" }, { status: 409 });
+  }
+
   const keep = new Set(manifest.photos.map((p) => p.src));
 
   const orphans: string[] = [];
