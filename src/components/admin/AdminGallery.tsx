@@ -98,6 +98,15 @@ export default function AdminGallery({
   const clearBusy = (id: string) =>
     setBusyIds((b) => b.filter((x) => x !== id));
 
+  // The manifest sits behind a 60s edge cache, so poll across that window
+  // until the server reflects the change. Local overrides hold the UI steady
+  // in the meantime.
+  const revalidate = () => {
+    for (const delay of [1000, 5000, 20000, 65000]) {
+      setTimeout(() => qc.invalidateQueries({ queryKey: KEY }), delay);
+    }
+  };
+
   const { data: list = [] } = useQuery({
     queryKey: KEY,
     queryFn: async (): Promise<AdminPhoto[]> => {
@@ -116,27 +125,19 @@ export default function AdminGallery({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id }),
       }),
-    onMutate: async (id) => {
+    // Optimistic state lives only in `removed`; the query cache stays pure
+    // server data so override release can trust it.
+    onMutate: (id) => {
       markBusy(id);
-      await qc.cancelQueries({ queryKey: KEY });
-      const prev = qc.getQueryData<AdminPhoto[]>(KEY);
-      qc.setQueryData<AdminPhoto[]>(KEY, (old = []) => {
-        const target = old.find((p) => p.id === id);
-        return target?.managed
-          ? old.filter((p) => p.id !== id)
-          : old.map((p) => (p.id === id ? { ...p, hidden: true } : p));
-      });
-      setRemoved((r) => [...r, id]);
-      return { prev };
+      setRemoved((r) => (r.includes(id) ? r : [...r, id]));
     },
-    onError: (_e, id, ctx) => {
-      if (ctx?.prev) qc.setQueryData(KEY, ctx.prev);
+    onError: (_e, id) => {
       setRemoved((r) => r.filter((x) => x !== id));
       setNotice("Gagal menghapus foto. Coba lagi.");
     },
     onSettled: (_d, _e, id) => {
       clearBusy(id);
-      qc.invalidateQueries({ queryKey: KEY });
+      revalidate();
     },
   });
 
@@ -152,13 +153,8 @@ export default function AdminGallery({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(v),
       }),
-    onMutate: async (v) => {
+    onMutate: (v) => {
       markBusy(v.id);
-      await qc.cancelQueries({ queryKey: KEY });
-      const prev = qc.getQueryData<AdminPhoto[]>(KEY);
-      qc.setQueryData<AdminPhoto[]>(KEY, (old = []) =>
-        old.map((p) => (p.id === v.id ? { ...p, ...v } : p)),
-      );
       if (typeof v.featured === "boolean") {
         setFeaturedOverride((o) => ({ ...o, [v.id]: v.featured as boolean }));
       }
@@ -166,10 +162,8 @@ export default function AdminGallery({
         setHeroOverride((o) => ({ ...o, [v.id]: v.hero as boolean }));
       }
       if (v.hidden === false) setRemoved((r) => r.filter((x) => x !== v.id));
-      return { prev };
     },
-    onError: (_e, v, ctx) => {
-      if (ctx?.prev) qc.setQueryData(KEY, ctx.prev);
+    onError: (_e, v) => {
       setFeaturedOverride((o) => {
         const next = { ...o };
         delete next[v.id];
@@ -184,7 +178,7 @@ export default function AdminGallery({
     },
     onSettled: (_d, _e, v) => {
       clearBusy(v.id);
-      qc.invalidateQueries({ queryKey: KEY });
+      revalidate();
     },
   });
 
@@ -263,9 +257,7 @@ export default function AdminGallery({
     if (uploaded.length < arr.length) {
       setNotice(`${arr.length - uploaded.length} foto gagal diupload.`);
     }
-    for (const delay of [0, 2000]) {
-      setTimeout(() => qc.invalidateQueries({ queryKey: KEY }), delay);
-    }
+    revalidate();
   };
 
   const runRepair = async () => {
