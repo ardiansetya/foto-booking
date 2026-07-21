@@ -111,9 +111,9 @@ function formatTime(t: string): string {
 }
 
 function buildMessage(f: FormState): string {
-  return `Halo Kak ${f.clientName} 👋
+  return `Halo Kak ${f.clientName}
 
-  Perkenalkan, saya ${f.photographer} dari Team dari Bylian. Mau konfirmasi jadwal foto Kakak ya.
+  Perkenalkan, saya ${f.photographer} dari Team dari Omegraduation. Mau konfirmasi jadwal foto Kakak ya.
   
   Lokasi: ${f.location}
   Tanggal: ${formatDate(f.date)}
@@ -125,7 +125,7 @@ function buildMessage(f: FormState): string {
   
   Untuk jam pemotretannya mohon mengikuti jadwal yang sudah dikirim oleh admin ya, Kak.
   
-  Terima kasih 🙏🏻
+  Terima kasih!
   `;
 }
 
