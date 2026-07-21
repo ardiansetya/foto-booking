@@ -201,18 +201,6 @@ export default function AdminGallery({
             handleUploadUrl: "/api/blob-upload",
             contentType: "image/webp",
           });
-          await fetch("/api/admin/photo", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              id,
-              src: result.url,
-              width,
-              height,
-              alt: `Foto ${uploadCat}`,
-              category: uploadCat,
-            }),
-          });
           return {
             id,
             src: result.url,
@@ -235,6 +223,27 @@ export default function AdminGallery({
     setTemps((prev) => prev.filter((t) => !newTemps.includes(t)));
 
     const uploaded = results.filter((r): r is Item => r !== null);
+
+    // Register everything in one request: parallel per-file writes raced
+    // and dropped photos from the manifest.
+    if (uploaded.length > 0) {
+      const res = await fetch("/api/admin/photo", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          photos: uploaded.map(({ id, src, width, height, alt, category }) => ({
+            id,
+            src,
+            width,
+            height,
+            alt,
+            category,
+          })),
+        }),
+      });
+      if (!res.ok) setNotice("Foto terupload tapi gagal disimpan ke galeri.");
+    }
+
     setPending((prev) => [...prev, ...uploaded]);
     if (uploaded.length < arr.length) {
       setNotice(`${arr.length - uploaded.length} foto gagal diupload.`);
