@@ -67,6 +67,10 @@ export default function AdminGallery({
   const [tab, setTab] = useState<GalleryCategory>(categories[0].id);
   const [temps, setTemps] = useState<Item[]>([]);
   const [pending, setPending] = useState<Item[]>([]); // uploaded, awaiting manifest propagation
+  const [removed, setRemoved] = useState<string[]>([]); // deleted, awaiting propagation
+  const [featuredOverride, setFeaturedOverride] = useState<
+    Record<string, boolean>
+  >({});
   const [uploading, setUploading] = useState(false);
   const [cleaning, setCleaning] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -111,12 +115,18 @@ export default function AdminGallery({
           ? old.filter((p) => p.id !== id)
           : old.map((p) => (p.id === id ? { ...p, hidden: true } : p));
       });
+      setRemoved((r) => [...r, id]);
       return { prev };
     },
-    onError: (_e, _id, ctx) => {
+    onError: (_e, id, ctx) => {
       if (ctx?.prev) qc.setQueryData(KEY, ctx.prev);
+      setRemoved((r) => r.filter((x) => x !== id));
     },
-    onSettled: () => qc.invalidateQueries({ queryKey: KEY }),
+    onSettled: () => {
+      for (const delay of [0, 2500, 6000]) {
+        setTimeout(() => qc.invalidateQueries({ queryKey: KEY }), delay);
+      }
+    },
   });
 
   const patchMutation = useMutation({
@@ -132,12 +142,22 @@ export default function AdminGallery({
       qc.setQueryData<AdminPhoto[]>(KEY, (old = []) =>
         old.map((p) => (p.id === v.id ? { ...p, ...v } : p)),
       );
+      if (typeof v.featured === "boolean") {
+        setFeaturedOverride((o) => ({ ...o, [v.id]: v.featured as boolean }));
+      }
+      if (v.hidden === false) {
+        setRemoved((r) => r.filter((x) => x !== v.id));
+      }
       return { prev };
     },
     onError: (_e, _v, ctx) => {
       if (ctx?.prev) qc.setQueryData(KEY, ctx.prev);
     },
-    onSettled: () => qc.invalidateQueries({ queryKey: KEY }),
+    onSettled: () => {
+      for (const delay of [0, 2500, 6000]) {
+        setTimeout(() => qc.invalidateQueries({ queryKey: KEY }), delay);
+      }
+    },
   });
 
   const handleUpload = async (files: FileList | null) => {
@@ -215,16 +235,36 @@ export default function AdminGallery({
     router.refresh();
   };
 
-  // Drop pending once the refetched list includes them.
+  // Release local overrides once the refetched list agrees with them.
   useEffect(() => {
     setPending((prev) => prev.filter((p) => !list.some((l) => l.id === p.id)));
+    setRemoved((prev) => prev.filter((id) => list.some((l) => l.id === id)));
+    setFeaturedOverride((prev) => {
+      const next: Record<string, boolean> = {};
+      let changed = false;
+      for (const [id, v] of Object.entries(prev)) {
+        const found = list.find((l) => l.id === id);
+        if (found && Boolean(found.featured) !== v) next[id] = v;
+        else changed = true;
+      }
+      return changed ? next : prev;
+    });
   }, [list]);
 
-  const listIds = new Set(list.map((p) => p.id));
+  // Server list with local (not yet propagated) changes applied.
+  const effective: AdminPhoto[] = list
+    .filter((p) => !removed.includes(p.id))
+    .map((p) =>
+      p.id in featuredOverride
+        ? { ...p, featured: featuredOverride[p.id] }
+        : p,
+    );
+
+  const effectiveIds = new Set(effective.map((p) => p.id));
   const photos: Item[] = [
     ...temps.filter((p) => p.category === tab),
-    ...pending.filter((p) => p.category === tab && !listIds.has(p.id)),
-    ...list.filter((p) => p.category === tab),
+    ...pending.filter((p) => p.category === tab && !effectiveIds.has(p.id)),
+    ...effective.filter((p) => p.category === tab),
   ];
 
   return (
@@ -233,9 +273,12 @@ export default function AdminGallery({
       <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
         <div className="flex flex-wrap gap-2">
           {categories.map((c) => {
-            const count = list.filter(
-              (p) => p.category === c.id && !p.hidden,
-            ).length;
+            const count =
+              effective.filter((p) => p.category === c.id && !p.hidden)
+                .length +
+              pending.filter(
+                (p) => p.category === c.id && !effectiveIds.has(p.id),
+              ).length;
             return (
               <button
                 key={c.id}
