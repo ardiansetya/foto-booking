@@ -1,6 +1,5 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useState } from "react";
 import type { GalleryPhoto } from "@/lib/gallery";
 import ResponsiveImage from "../shared/ResponsiveImage";
@@ -11,9 +10,18 @@ const IMAGE_CLASS =
   "scale-105 animate-[pulse_6s_cubic-bezier(0.4,0,0.6,1)_infinite] opacity-35 dark:opacity-60";
 
 export default function HeroBackdrop({ photos }: { photos: GalleryPhoto[] }) {
-  const reduceMotion = useReducedMotion();
   const [index, setIndex] = useState(0);
-  const rotating = photos.length > 1 && !reduceMotion;
+  const [instant, setInstant] = useState(false);
+  const rotating = photos.length > 1;
+
+  // Reduced motion removes the crossfade but keeps the rotation.
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setInstant(mq.matches);
+    const onChange = (e: MediaQueryListEvent) => setInstant(e.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
 
   useEffect(() => {
     if (!rotating) return;
@@ -26,40 +34,31 @@ export default function HeroBackdrop({ photos }: { photos: GalleryPhoto[] }) {
 
   if (photos.length === 0) return null;
 
-  // Single photo (or reduced motion): render statically.
-  if (!rotating) {
-    return (
-      <ResponsiveImage
-        src={photos[0].src}
-        alt="Foto Wisuda Omegraduation"
-        fill
-        priority
-        sizes="100vw"
-        className={IMAGE_CLASS}
-      />
-    );
-  }
-
-  const current = photos[index];
+  // All photos stay mounted so the next one is already decoded before
+  // its turn; only opacity changes. Reliable on mobile.
   return (
-    <AnimatePresence initial={false}>
-      <motion.div
-        key={current.id}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 1.2, ease: "easeInOut" }}
-        className="absolute inset-0"
-      >
-        <ResponsiveImage
-          src={current.src}
-          alt="Foto Wisuda Omegraduation"
-          fill
-          priority={index === 0}
-          sizes="100vw"
-          className={IMAGE_CLASS}
-        />
-      </motion.div>
-    </AnimatePresence>
+    <>
+      {photos.map((photo, i) => (
+        <div
+          key={photo.id}
+          aria-hidden={i !== index}
+          className="absolute inset-0"
+          style={{
+            opacity: i === index ? 1 : 0,
+            transition: instant ? undefined : "opacity 1200ms ease-in-out",
+          }}
+        >
+          <ResponsiveImage
+            src={photo.src}
+            alt="Foto Wisuda Omegraduation"
+            fill
+            priority={i === 0}
+            loading={i === 0 ? undefined : "eager"}
+            sizes="100vw"
+            className={IMAGE_CLASS}
+          />
+        </div>
+      ))}
+    </>
   );
 }

@@ -55,6 +55,13 @@ export default function MobileNav() {
           >
             <nav className="flex flex-col gap-6 text-xl font-medium">
               <Link
+                href="/"
+                onClick={() => setIsOpen(false)}
+                className="border-b border-zinc-200 dark:border-zinc-900 py-3 text-zinc-700 hover:text-emerald-500 dark:text-zinc-300 dark:hover:text-emerald-400 transition-colors"
+              >
+                Home
+              </Link>
+              <Link
                 href="/portfolio"
                 onClick={() => setIsOpen(false)}
                 className="border-b border-zinc-200 dark:border-zinc-900 py-3 text-zinc-700 hover:text-emerald-500 dark:text-zinc-300 dark:hover:text-emerald-400 transition-colors"
