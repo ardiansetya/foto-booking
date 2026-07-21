@@ -1,20 +1,27 @@
 import Link from "next/link";
-import { HERO_IMAGE } from "@/lib/data";
+import { getFeaturedPhotos, getGalleryPhotos } from "@/lib/gallery";
 import ResponsiveImage from "../shared/ResponsiveImage";
 
-export default function Hero() {
+export default async function Hero() {
+  // Prefer a landscape featured photo; fall back to any photo.
+  const featured = await getFeaturedPhotos();
+  const pool = featured.length > 0 ? featured : await getGalleryPhotos();
+  const heroImage = pool.find((p) => p.width > p.height) ?? pool[0];
+
   return (
     <section className="relative h-[calc(100dvh-4rem)] min-h-[500px] w-full overflow-hidden bg-zinc-100 dark:bg-zinc-950 transition-colors duration-300">
-      {/* Background Image (landscape 16:9, cropped by object-cover) */}
+      {/* Background Image (landscape preferred, cropped by object-cover) */}
       <div className="absolute inset-0 z-0">
-        <ResponsiveImage
-          src={HERO_IMAGE}
-          alt="Foto Wisuda Omegraduation"
-          fill
-          priority
-          sizes="100vw"
-          className="scale-105 animate-[pulse_6s_cubic-bezier(0.4,0,0.6,1)_infinite] opacity-35 dark:opacity-60"
-        />
+        {heroImage && (
+          <ResponsiveImage
+            src={heroImage.src}
+            alt="Foto Wisuda Omegraduation"
+            fill
+            priority
+            sizes="100vw"
+            className="scale-105 animate-[pulse_6s_cubic-bezier(0.4,0,0.6,1)_infinite] opacity-35 dark:opacity-60"
+          />
+        )}
         {/* Shroud for contrast */}
         <div className="absolute inset-0 bg-gradient-to-t from-zinc-50 via-zinc-50/40 to-transparent dark:from-zinc-950 dark:via-zinc-950/40" />
       </div>

@@ -1,13 +1,3 @@
-import type { StaticImageData } from "next/image";
-
-export interface PortfolioImage {
-  id: string;
-  src: StaticImageData;
-  alt: string;
-  category: "personal" | "couple" | "wedding" | "group" | "family";
-  featured?: boolean;
-}
-
 export interface Package {
   id: string;
   name: string;

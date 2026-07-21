@@ -1,9 +1,12 @@
 import "server-only";
 import { list } from "@vercel/blob";
-import { PORTFOLIO_IMAGES } from "./data";
-import type { PortfolioImage } from "./types";
 
-export type GalleryCategory = PortfolioImage["category"];
+export type GalleryCategory =
+  | "personal"
+  | "couple"
+  | "wedding"
+  | "group"
+  | "family";
 
 export const GALLERY_CATEGORIES: { id: GalleryCategory; label: string }[] = [
   { id: "personal", label: "Personal" },
@@ -40,18 +43,8 @@ export const EMPTY_MANIFEST: GalleryManifest = {
   photos: [],
 };
 
-// Repo seed photos (static imports).
-export const STATIC_PHOTOS: GalleryPhoto[] = PORTFOLIO_IMAGES.map((img) => ({
-  id: img.id,
-  src: img.src.src,
-  width: img.src.width,
-  height: img.src.height,
-  blurDataURL: img.src.blurDataURL,
-  alt: img.alt,
-  category: img.category,
-  featured: img.featured,
-  managed: false,
-}));
+// All photos now live in Blob; no bundled seed photos remain.
+export const STATIC_PHOTOS: GalleryPhoto[] = [];
 
 export async function readManifest(): Promise<GalleryManifest | null> {
   if (!process.env.BLOB_READ_WRITE_TOKEN) return null;
