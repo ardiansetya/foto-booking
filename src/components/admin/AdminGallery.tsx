@@ -1,24 +1,21 @@
 "use client";
 
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { upload } from "@vercel/blob/client";
-import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
-import {
-  Eraser,
-  Eye,
-  EyeOff,
-  Loader2,
-  LogOut,
-  Star,
-  Trash2,
-  Upload,
-} from "lucide-react";
+import { Eraser, Eye, Loader2, LogOut, Star, Trash2, Upload } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import type { AdminPhoto, GalleryCategory } from "@/lib/gallery";
 
 type Item = AdminPhoto & { temp?: boolean };
@@ -29,6 +26,13 @@ interface Props {
   initialPhotos: AdminPhoto[];
   categories: { id: GalleryCategory; label: string }[];
   blobReady: boolean;
+}
+
+interface Confirm {
+  title: string;
+  description: string;
+  actionLabel: string;
+  onConfirm: () => void;
 }
 
 async function toWebp(
@@ -66,27 +70,21 @@ export default function AdminGallery({
   const qc = useQueryClient();
   const [tab, setTab] = useState<GalleryCategory>(categories[0].id);
   const [temps, setTemps] = useState<Item[]>([]);
-  const [pending, setPending] = useState<Item[]>([]); // uploaded, awaiting manifest propagation
-  const [removed, setRemoved] = useState<string[]>([]); // deleted, awaiting propagation
+  const [pending, setPending] = useState<Item[]>([]); // uploaded, awaiting propagation
+  const [removed, setRemoved] = useState<string[]>([]);
   const [featuredOverride, setFeaturedOverride] = useState<
     Record<string, boolean>
   >({});
+  const [busyIds, setBusyIds] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
   const [cleaning, setCleaning] = useState(false);
+  const [confirmState, setConfirmState] = useState<Confirm | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  const cleanup = async () => {
-    if (!confirm("Hapus file duplikat/orphan di penyimpanan?")) return;
-    setCleaning(true);
-    const res = await fetch("/api/admin/cleanup", { method: "POST" });
-    const data = (await res.json().catch(() => ({}))) as { deleted?: number };
-    setCleaning(false);
-    alert(
-      res.ok
-        ? `${data.deleted ?? 0} file duplikat dihapus.`
-        : "Gagal membersihkan.",
-    );
-  };
+  const markBusy = (id: string) => setBusyIds((b) => [...b, id]);
+  const clearBusy = (id: string) =>
+    setBusyIds((b) => b.filter((x) => x !== id));
 
   const { data: list = [] } = useQuery({
     queryKey: KEY,
@@ -107,6 +105,7 @@ export default function AdminGallery({
         body: JSON.stringify({ id }),
       }),
     onMutate: async (id) => {
+      markBusy(id);
       await qc.cancelQueries({ queryKey: KEY });
       const prev = qc.getQueryData<AdminPhoto[]>(KEY);
       qc.setQueryData<AdminPhoto[]>(KEY, (old = []) => {
@@ -121,11 +120,11 @@ export default function AdminGallery({
     onError: (_e, id, ctx) => {
       if (ctx?.prev) qc.setQueryData(KEY, ctx.prev);
       setRemoved((r) => r.filter((x) => x !== id));
+      setNotice("Gagal menghapus foto. Coba lagi.");
     },
-    onSettled: () => {
-      for (const delay of [0, 2500, 6000]) {
-        setTimeout(() => qc.invalidateQueries({ queryKey: KEY }), delay);
-      }
+    onSettled: (_d, _e, id) => {
+      clearBusy(id);
+      qc.invalidateQueries({ queryKey: KEY });
     },
   });
 
@@ -137,6 +136,7 @@ export default function AdminGallery({
         body: JSON.stringify(v),
       }),
     onMutate: async (v) => {
+      markBusy(v.id);
       await qc.cancelQueries({ queryKey: KEY });
       const prev = qc.getQueryData<AdminPhoto[]>(KEY);
       qc.setQueryData<AdminPhoto[]>(KEY, (old = []) =>
@@ -145,18 +145,21 @@ export default function AdminGallery({
       if (typeof v.featured === "boolean") {
         setFeaturedOverride((o) => ({ ...o, [v.id]: v.featured as boolean }));
       }
-      if (v.hidden === false) {
-        setRemoved((r) => r.filter((x) => x !== v.id));
-      }
+      if (v.hidden === false) setRemoved((r) => r.filter((x) => x !== v.id));
       return { prev };
     },
-    onError: (_e, _v, ctx) => {
+    onError: (_e, v, ctx) => {
       if (ctx?.prev) qc.setQueryData(KEY, ctx.prev);
+      setFeaturedOverride((o) => {
+        const next = { ...o };
+        delete next[v.id];
+        return next;
+      });
+      setNotice("Gagal menyimpan perubahan. Coba lagi.");
     },
-    onSettled: () => {
-      for (const delay of [0, 2500, 6000]) {
-        setTimeout(() => qc.invalidateQueries({ queryKey: KEY }), delay);
-      }
+    onSettled: (_d, _e, v) => {
+      clearBusy(v.id);
+      qc.invalidateQueries({ queryKey: KEY });
     },
   });
 
@@ -221,12 +224,26 @@ export default function AdminGallery({
     for (const t of newTemps) URL.revokeObjectURL(t.src);
     setTemps((prev) => prev.filter((t) => !newTemps.includes(t)));
 
-    // Keep uploaded photos visible until the (CDN-cached) manifest catches up.
     const uploaded = results.filter((r): r is Item => r !== null);
     setPending((prev) => [...prev, ...uploaded]);
-    for (const delay of [0, 2500, 6000]) {
+    if (uploaded.length < arr.length) {
+      setNotice(`${arr.length - uploaded.length} foto gagal diupload.`);
+    }
+    for (const delay of [0, 2000]) {
       setTimeout(() => qc.invalidateQueries({ queryKey: KEY }), delay);
     }
+  };
+
+  const runCleanup = async () => {
+    setCleaning(true);
+    const res = await fetch("/api/admin/cleanup", { method: "POST" });
+    const data = (await res.json().catch(() => ({}))) as { deleted?: number };
+    setCleaning(false);
+    setNotice(
+      res.ok
+        ? `${data.deleted ?? 0} file duplikat dihapus.`
+        : "Gagal membersihkan penyimpanan.",
+    );
   };
 
   const logout = async () => {
@@ -249,49 +266,62 @@ export default function AdminGallery({
       for (const [id, v] of Object.entries(prev)) {
         const found = list.find((l) => l.id === id);
         if (found) {
-          // Keep the override until the server reports the same value.
           if (Boolean(found.featured) !== v) next[id] = v;
           else changed = true;
         } else if (pendingIds.has(id)) {
-          next[id] = v; // photo still propagating, keep override
+          next[id] = v;
         } else {
-          changed = true; // photo gone, drop override
+          changed = true;
         }
       }
       return changed ? next : prev;
     });
   }, [list]);
 
-  // Apply local (not yet propagated) changes on top of any photo.
   const applyLocal = <T extends Item>(p: T): T =>
-    p.id in featuredOverride
-      ? { ...p, featured: featuredOverride[p.id] }
-      : p;
+    p.id in featuredOverride ? { ...p, featured: featuredOverride[p.id] } : p;
 
   const effective: AdminPhoto[] = list
     .filter((p) => !removed.includes(p.id))
     .map(applyLocal);
-
   const livePending = pending
     .filter((p) => !removed.includes(p.id))
     .map(applyLocal);
-
   const effectiveIds = new Set(effective.map((p) => p.id));
+
   const photos: Item[] = [
     ...temps.filter((p) => p.category === tab),
     ...livePending.filter((p) => p.category === tab && !effectiveIds.has(p.id)),
     ...effective.filter((p) => p.category === tab),
   ];
 
+  const askDelete = (p: Item) =>
+    setConfirmState({
+      title: p.managed ? "Hapus foto?" : "Sembunyikan foto?",
+      description: p.managed
+        ? "Foto dihapus permanen dari website dan penyimpanan."
+        : "Foto bawaan disembunyikan dari website.",
+      actionLabel: p.managed ? "Hapus" : "Sembunyikan",
+      onConfirm: () => deleteMutation.mutate(p.id),
+    });
+
+  const askCleanup = () =>
+    setConfirmState({
+      title: "Bersihkan penyimpanan?",
+      description:
+        "Menghapus file duplikat atau sisa yang tidak dipakai website. Foto aktif tidak terpengaruh.",
+      actionLabel: "Bersihkan",
+      onConfirm: runCleanup,
+    });
+
   return (
     <div>
-      {/* Tabs + logout */}
+      {/* Tabs + actions */}
       <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
         <div className="flex flex-wrap gap-2">
           {categories.map((c) => {
             const count =
-              effective.filter((p) => p.category === c.id && !p.hidden)
-                .length +
+              effective.filter((p) => p.category === c.id && !p.hidden).length +
               livePending.filter(
                 (p) => p.category === c.id && !effectiveIds.has(p.id),
               ).length;
@@ -317,8 +347,7 @@ export default function AdminGallery({
             <button
               type="button"
               disabled={cleaning}
-              onClick={cleanup}
-              title="Hapus file duplikat/orphan di penyimpanan"
+              onClick={askCleanup}
               className="inline-flex items-center gap-2 rounded-full border border-zinc-200 dark:border-zinc-800 px-4 py-2 text-sm text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors disabled:opacity-50"
             >
               {cleaning ? (
@@ -376,89 +405,135 @@ export default function AdminGallery({
         </p>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-          {photos.map((p) => (
-            <div
-              key={p.id}
-              className={`group relative overflow-hidden rounded-xl border ${
-                p.hidden
-                  ? "border-zinc-300 dark:border-zinc-700 opacity-50"
-                  : "border-zinc-200 dark:border-zinc-800"
-              }`}
-            >
-              <div className="relative aspect-square bg-zinc-200 dark:bg-zinc-800">
-                <Image
-                  src={p.src}
-                  alt={p.alt}
-                  fill
-                  sizes="(max-width: 640px) 50vw, 25vw"
-                  unoptimized={p.temp}
-                  className="object-cover"
-                />
-                {p.temp && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-zinc-950/40">
-                    <Loader2 className="h-6 w-6 animate-spin text-white" />
-                  </div>
-                )}
-                {p.featured && !p.temp && (
-                  <span className="absolute top-2 left-2 inline-flex items-center gap-1 rounded-full bg-amber-400 px-2 py-0.5 text-[10px] font-semibold text-zinc-950">
-                    <Star className="h-3 w-3" />
-                    Unggulan
-                  </span>
-                )}
-              </div>
-
-              {!p.temp && (
-                <div className="flex items-center justify-between gap-1 p-2 bg-white dark:bg-zinc-900">
-                  <button
-                    type="button"
-                    onClick={() =>
-                      patchMutation.mutate({ id: p.id, featured: !p.featured })
-                    }
-                    title={p.featured ? "Lepas unggulan" : "Jadikan unggulan"}
-                    className={`p-1.5 rounded-md transition-colors ${
-                      p.featured
-                        ? "text-amber-500"
-                        : "text-zinc-400 hover:text-amber-500"
-                    }`}
-                  >
-                    <Star className="h-4 w-4" />
-                  </button>
-
-                  {p.hidden ? (
-                    <button
-                      type="button"
-                      onClick={() =>
-                        patchMutation.mutate({ id: p.id, hidden: false })
-                      }
-                      title="Tampilkan lagi"
-                      className="p-1.5 rounded-md text-zinc-400 hover:text-emerald-500 transition-colors"
-                    >
-                      <Eye className="h-4 w-4" />
-                    </button>
-                  ) : (
-                    <button
-                      type="button"
-                      disabled={!blobReady}
-                      onClick={() => {
-                        if (confirm(p.managed ? "Hapus foto ini?" : "Sembunyikan foto bawaan?"))
-                          deleteMutation.mutate(p.id);
-                      }}
-                      title={p.managed ? "Hapus foto" : "Sembunyikan foto"}
-                      className="p-1.5 rounded-md text-zinc-400 hover:text-red-500 transition-colors disabled:opacity-40"
-                    >
-                      {p.managed ? (
-                        <Trash2 className="h-4 w-4" />
-                      ) : (
-                        <EyeOff className="h-4 w-4" />
-                      )}
-                    </button>
+          {photos.map((p) => {
+            const busy = busyIds.includes(p.id);
+            return (
+              <div
+                key={p.id}
+                className={`group relative overflow-hidden rounded-xl border ${
+                  p.hidden
+                    ? "border-zinc-300 dark:border-zinc-700 opacity-50"
+                    : "border-zinc-200 dark:border-zinc-800"
+                }`}
+              >
+                <div className="relative aspect-square bg-zinc-200 dark:bg-zinc-800">
+                  <Image
+                    src={p.src}
+                    alt={p.alt}
+                    fill
+                    sizes="(max-width: 640px) 50vw, 25vw"
+                    unoptimized={p.temp}
+                    className="object-cover"
+                  />
+                  {(p.temp || busy) && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-zinc-950/40">
+                      <Loader2 className="h-6 w-6 animate-spin text-white" />
+                    </div>
+                  )}
+                  {p.featured && !p.temp && (
+                    <span className="absolute top-2 left-2 inline-flex items-center gap-1 rounded-full bg-amber-400 px-2 py-0.5 text-[10px] font-semibold text-zinc-950">
+                      <Star className="h-3 w-3" />
+                      Unggulan
+                    </span>
                   )}
                 </div>
-              )}
-            </div>
-          ))}
+
+                {!p.temp && (
+                  <div className="flex items-center justify-between gap-1 p-2 bg-white dark:bg-zinc-900">
+                    <button
+                      type="button"
+                      disabled={busy}
+                      onClick={() =>
+                        patchMutation.mutate({ id: p.id, featured: !p.featured })
+                      }
+                      title={p.featured ? "Lepas unggulan" : "Jadikan unggulan"}
+                      className={`p-1.5 rounded-md transition-colors disabled:opacity-40 ${
+                        p.featured
+                          ? "text-amber-500"
+                          : "text-zinc-400 hover:text-amber-500"
+                      }`}
+                    >
+                      <Star className="h-4 w-4" />
+                    </button>
+
+                    {p.hidden ? (
+                      <button
+                        type="button"
+                        disabled={busy}
+                        onClick={() =>
+                          patchMutation.mutate({ id: p.id, hidden: false })
+                        }
+                        title="Tampilkan lagi"
+                        className="p-1.5 rounded-md text-zinc-400 hover:text-emerald-500 transition-colors disabled:opacity-40"
+                      >
+                        <Eye className="h-4 w-4" />
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        disabled={busy || !blobReady}
+                        onClick={() => askDelete(p)}
+                        title={p.managed ? "Hapus foto" : "Sembunyikan foto"}
+                        className="p-1.5 rounded-md text-zinc-400 hover:text-red-500 transition-colors disabled:opacity-40"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       )}
+
+      {/* Confirm dialog */}
+      <AlertDialog
+        open={confirmState !== null}
+        onOpenChange={(open) => {
+          if (!open) setConfirmState(null);
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{confirmState?.title}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {confirmState?.description}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Batal</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                confirmState?.onConfirm();
+                setConfirmState(null);
+              }}
+            >
+              {confirmState?.actionLabel}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Notice dialog */}
+      <AlertDialog
+        open={notice !== null}
+        onOpenChange={(open) => {
+          if (!open) setNotice(null);
+        }}
+      >
+        <AlertDialogContent size="sm">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Informasi</AlertDialogTitle>
+            <AlertDialogDescription>{notice}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => setNotice(null)}>
+              Tutup
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
