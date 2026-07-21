@@ -52,9 +52,7 @@ export async function readManifest(): Promise<GalleryManifest | null> {
     const { blobs } = await list({ prefix: MANIFEST_PATH });
     const manifest = blobs.find((b) => b.pathname === MANIFEST_PATH);
     if (!manifest) return null;
-    const res = await fetch(`${manifest.url}?ts=${Date.now()}`, {
-      cache: "no-store",
-    });
+    const res = await fetch(manifest.url, { cache: "no-store" });
     if (!res.ok) return null;
     const data = (await res.json()) as Partial<GalleryManifest>;
     return {

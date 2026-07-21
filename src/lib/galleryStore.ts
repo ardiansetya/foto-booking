@@ -18,9 +18,9 @@ export async function saveManifest(manifest: GalleryManifest): Promise<void> {
     contentType: "application/json",
     allowOverwrite: true,
     addRandomSuffix: false,
-    // Never CDN-cache the manifest: stale reads caused lost updates
-    // (featured toggles reverting, deleted photos reappearing).
-    cacheControlMaxAge: 0,
+    // Shortest cache Blob allows (60s minimum) so manifest edits propagate
+    // quickly; the admin UI bridges the remaining gap locally.
+    cacheControlMaxAge: 60,
   });
 }
 
