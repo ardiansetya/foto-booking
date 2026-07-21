@@ -235,8 +235,12 @@ export default function AdminGallery({
     router.refresh();
   };
 
+  const pendingRef = useRef<Item[]>(pending);
+  pendingRef.current = pending;
+
   // Release local overrides once the refetched list agrees with them.
   useEffect(() => {
+    const pendingIds = new Set(pendingRef.current.map((p) => p.id));
     setPending((prev) => prev.filter((p) => !list.some((l) => l.id === p.id)));
     setRemoved((prev) => prev.filter((id) => list.some((l) => l.id === id)));
     setFeaturedOverride((prev) => {
@@ -244,26 +248,38 @@ export default function AdminGallery({
       let changed = false;
       for (const [id, v] of Object.entries(prev)) {
         const found = list.find((l) => l.id === id);
-        if (found && Boolean(found.featured) !== v) next[id] = v;
-        else changed = true;
+        if (found) {
+          // Keep the override until the server reports the same value.
+          if (Boolean(found.featured) !== v) next[id] = v;
+          else changed = true;
+        } else if (pendingIds.has(id)) {
+          next[id] = v; // photo still propagating, keep override
+        } else {
+          changed = true; // photo gone, drop override
+        }
       }
       return changed ? next : prev;
     });
   }, [list]);
 
-  // Server list with local (not yet propagated) changes applied.
+  // Apply local (not yet propagated) changes on top of any photo.
+  const applyLocal = <T extends Item>(p: T): T =>
+    p.id in featuredOverride
+      ? { ...p, featured: featuredOverride[p.id] }
+      : p;
+
   const effective: AdminPhoto[] = list
     .filter((p) => !removed.includes(p.id))
-    .map((p) =>
-      p.id in featuredOverride
-        ? { ...p, featured: featuredOverride[p.id] }
-        : p,
-    );
+    .map(applyLocal);
+
+  const livePending = pending
+    .filter((p) => !removed.includes(p.id))
+    .map(applyLocal);
 
   const effectiveIds = new Set(effective.map((p) => p.id));
   const photos: Item[] = [
     ...temps.filter((p) => p.category === tab),
-    ...pending.filter((p) => p.category === tab && !effectiveIds.has(p.id)),
+    ...livePending.filter((p) => p.category === tab && !effectiveIds.has(p.id)),
     ...effective.filter((p) => p.category === tab),
   ];
 
@@ -276,7 +292,7 @@ export default function AdminGallery({
             const count =
               effective.filter((p) => p.category === c.id && !p.hidden)
                 .length +
-              pending.filter(
+              livePending.filter(
                 (p) => p.category === c.id && !effectiveIds.has(p.id),
               ).length;
             return (
